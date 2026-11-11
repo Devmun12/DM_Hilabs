@@ -95,7 +95,7 @@ h1,h2,.tile .v{color:var(--ink)}
 @keyframes spin{from{opacity:0;transform:rotate(-90deg) scale(.85)}to{opacity:1;transform:none}}
 .tiles>.card{transition:box-shadow .15s ease}
 .tiles>.card:hover{box-shadow:0 4px 14px rgba(8,36,100,.08)}
-.meter i{transform-origin:left;animation:grow .5s ease-out both}
+
 .btn,.rail nav button{transition:background .15s ease,color .15s ease,transform .1s ease}
 .btn:hover{filter:brightness(1.07)}
 .rail nav button:hover{background:#edf2fc;color:#0a399e}.rail nav button[aria-current="page"]:hover{background:#0a399e;color:#fff}
