@@ -33,7 +33,7 @@ Edge cases in the data: low-confidence change (SYN-C-009), duplicate match (SYN-
 ## How on-screen numbers map to the deck
 | On screen | Deck metric |
 |---|---|
-| Applied without manual touch (%) | Changes applied without manual touch, target 60% or more |
+| Applied without manual touch (%) | Changes applied without manual touch, threshold 40% or more |
 | Roster verified in the last 90 days (%) | North star, target 80% or more for pilot groups |
 | Waiting for review / decided | Cycle time from submission to plan record, target 2 business days or less |
 | Staff minutes (illustrative) | Uses assumption A14: 6 minutes per manually keyed change, 2 minutes per reviewed exception |
