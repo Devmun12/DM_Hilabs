@@ -13,7 +13,7 @@ Live: https://devmun12.github.io/DM_Hilabs/ (no login, no install)
 4. **Outcomes**: before and after numbers update as you act.
 5. **How it works**: the pipeline and where each part sits in the deck.
 
-Edge cases in the data: low-confidence change (SYN-C-009), duplicate match (SYN-C-010), conflicting records (SYN-C-011), failed licence check (SYN-C-003), high-risk termination (SYN-C-005), new clinician not yet credentialed (SYN-C-002).
+Edge cases in the data: low-confidence change (SYN-C-009), duplicate match (SYN-C-010), conflicting records (SYN-C-011), failed licence check (SYN-C-003), primary care termination with assigned members (SYN-C-005), new clinician not yet credentialed (SYN-C-002).
 
 ## Files
 | File | Purpose |
@@ -38,7 +38,7 @@ Edge cases in the data: low-confidence change (SYN-C-009), duplicate match (SYN-
 | Waiting for review / decided | Cycle time from submission to plan record, target 2 business days or less |
 | Staff minutes (illustrative) | Uses assumption A14: 6 minutes per manually keyed change, 2 minutes per reviewed exception |
 
-Routing rule shown in the prototype: a change applies automatically only if confidence is 90% or more, every check passes and the change type is low risk. New clinicians without credentialing on file always go to review.
+Routing rule shown in the prototype: only contact-detail updates (phone, suite) apply automatically, and only at 90% confidence or more with every check passed. Adds, terminations, specialty changes, duplicates and conflicts always go to a reviewer.
 
 ## Known limits
 - Confidence scores, checks and the file upload are simulated. No model runs in the browser.

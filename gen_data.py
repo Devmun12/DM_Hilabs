@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Generates data.json: a fully synthetic roster dataset for the concept prototype.
 Seeded, so the output is reproducible. No real people, practices, plans or identifiers."""
-import json, random
+import json, random, re
 from datetime import date, timedelta
 
 random.seed(42)
@@ -69,13 +69,13 @@ g1 = [r for r in roster if r["group"] == "SYN-G-001"]
 pcp = next(r for r in g1 if r["specialty"] in ("Family Medicine", "Internal Medicine", "Pediatrics"))
 others = [r for r in g1 if r is not pcp]
 ch = [
-    change(1, None, "ADD", "record", "Not on plan record", "Cardiology", 0.96, "auto", "Approve", "All checks passed; credentialed through the group's delegated agreement.", checks("ADD"), "draft", pid="SYN-P-0901", pname="Dr. Imre Castellane", npi="1000000901"),
+    change(1, None, "ADD", "record", "Not on plan record", "Cardiology", 0.96, "review", "Approve", "Delegated group: committee approval is on file. A reviewer confirms the participation effective date before the clinician is loaded as participating.", checks("ADD"), "draft", edge="delegated_add", pid="SYN-P-0901", pname="Dr. Imre Castellane", npi="1000000901"),
     change(2, None, "ADD", "record", "Not on plan record", "Family Medicine", 0.88, "review", "Review", "New clinician is not yet credentialed with the plan: route to credentialing before activation.", checks("ADD", warn=3, detail="No credentialing file found"), "draft", edge="not_credentialed", pid="SYN-P-0902", pname="Dr. Petra Vollmarsh", npi="1000000902"),
     change(3, None, "ADD", "record", "Not on plan record", "Dermatology", 0.41, "review", "Reject", "Licence shows as expired in the synthetic state board check.", checks("ADD", fail=2, detail="Licence expired 2026-06-30"), "draft", edge="failed_check", pid="SYN-P-0903", pname="Dr. Odran Feathersby", npi="1000000903"),
-    change(4, others[0], "TERM", "status", "active", "terminated 2026-10-31", 0.97, "auto", "Approve", "All checks passed; no members assigned.", checks("TERM"), "draft"),
+    change(4, others[0], "TERM", "status", "active", "left this location 2026-10-31", 0.97, "review", "Approve", "All checks passed and no members assigned. Terminations are always confirmed by a reviewer, who also confirms whether this is one location or the whole network.", checks("TERM"), "draft", edge="termination"),
     change(5, pcp, "TERM", "status", "active", "terminated 2026-11-30", 0.93, "review", "Review", "Primary care clinician with assigned members: member reassignment is needed before termination.", checks("TERM", warn=2, detail="214 synthetic members assigned"), "draft", edge="high_risk"),
     change(6, others[1], "UPDATE", "phone", others[1]["phone"], "(555) 010-4410", 0.98, "auto", "Approve", "All checks passed.", checks("UPDATE"), "draft"),
-    change(7, others[2], "UPDATE", "location", others[2]["location"], "22 Example Parkway, Suite 300, Sampletown ZZ 00042", 0.95, "auto", "Approve", "Address standardised and matches the group's other clinicians at this site.", checks("UPDATE"), "draft"),
+    change(7, others[2], "UPDATE", "location", others[2]["location"], re.sub(r"Suite \d+", "Suite 210", others[2]["location"]), 0.95, "auto", "Approve", "Suite correction at the same street address; standardised.", checks("UPDATE"), "draft"),
     change(8, others[3], "UPDATE", "phone", others[3]["phone"], "(555) 010-4411", 0.97, "auto", "Approve", "All checks passed.", checks("UPDATE"), "draft"),
     change(9, others[4], "UPDATE", "specialty", others[4]["specialty"], "Sports Medicine", 0.58, "review", "Review", "Low confidence: new specialty does not match the registry taxonomy on file.", checks("UPDATE", warn=1, detail="Registry shows " + others[4]["specialty"]), "draft", edge="low_confidence"),
     change(10, others[5], "DUPLICATE", "name", others[5]["name"] + " (listed twice)", "Merge into one record", 0.82, "review", "Approve", "Duplicate match: the same NPI appears twice in the file with a name variant.", checks("DUPLICATE", fail=0, detail="Rows 14 and 22 share NPI " + others[5]["npi"]), "draft", edge="duplicate"),
@@ -91,13 +91,9 @@ random.shuffle(pool)
 for i in range(36):
     r, cid = pool[i], 13 + i
     if i < 28:
-        kind = random.choices(["UPDATE", "TERM"], [0.8, 0.2])[0]
-        if kind == "UPDATE":
-            f = random.choice(["phone", "location"])
-            new = phone(900 + i) if f == "phone" else addr(900 + i)
-            ch.append(change(cid, r, "UPDATE", f, r[f], new, round(random.uniform(0.91, 0.99), 2), "auto", "Approve", "All checks passed.", checks("UPDATE"), "auto_applied", sub_days=random.randint(1, 20)))
-        else:
-            ch.append(change(cid, r, "TERM", "status", "active", "terminated 2026-10-31", round(random.uniform(0.92, 0.98), 2), "auto", "Approve", "All checks passed; no members assigned.", checks("TERM"), "auto_applied", sub_days=random.randint(1, 20)))
+        f = random.choice(["phone", "phone", "location"])
+        new = phone(900 + i) if f == "phone" else re.sub(r"Suite \d+", f"Suite {200 + i}", r[f])
+        ch.append(change(cid, r, "UPDATE", f, r[f], new, round(random.uniform(0.91, 0.99), 2), "auto", "Approve", "All checks passed.", checks("UPDATE"), "auto_applied", sub_days=random.randint(1, 20)))
     else:
         kind, reason, w, d = REVIEW_REASONS[i % 4]
         if kind == "ADD":

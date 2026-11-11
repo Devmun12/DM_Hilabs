@@ -1731,9 +1731,9 @@
    "old": "Not on plan record",
    "new": "Cardiology",
    "confidence": 0.96,
-   "tier": "auto",
+   "tier": "review",
    "recommend": "Approve",
-   "reason": "All checks passed; credentialed through the group's delegated agreement.",
+   "reason": "Delegated group: committee approval is on file. A reviewer confirms the participation effective date before the clinician is loaded as participating.",
    "checks": [
     {
      "name": "NPI format and check digit (synthetic registry)",
@@ -1756,7 +1756,7 @@
      "detail": ""
     }
    ],
-   "edge": null,
+   "edge": "delegated_add",
    "submitted": "2026-11-11",
    "status": "draft",
    "include": true
@@ -1855,11 +1855,11 @@
    "type": "TERM",
    "field": "status",
    "old": "active",
-   "new": "terminated 2026-10-31",
+   "new": "left this location 2026-10-31",
    "confidence": 0.97,
-   "tier": "auto",
+   "tier": "review",
    "recommend": "Approve",
-   "reason": "All checks passed; no members assigned.",
+   "reason": "All checks passed and no members assigned. Terminations are always confirmed by a reviewer, who also confirms whether this is one location or the whole network.",
    "checks": [
     {
      "name": "Termination date present and not in the future",
@@ -1877,7 +1877,7 @@
      "detail": ""
     }
    ],
-   "edge": null,
+   "edge": "termination",
    "submitted": "2026-11-11",
    "status": "draft",
    "include": true
@@ -1966,11 +1966,11 @@
    "type": "UPDATE",
    "field": "location",
    "old": "128 Example Street, Suite 5, Sampletown ZZ 00014",
-   "new": "22 Example Parkway, Suite 300, Sampletown ZZ 00042",
+   "new": "128 Example Street, Suite 210, Sampletown ZZ 00014",
    "confidence": 0.95,
    "tier": "auto",
    "recommend": "Approve",
-   "reason": "Address standardised and matches the group's other clinicians at this site.",
+   "reason": "Suite correction at the same street address; standardised.",
    "checks": [
     {
      "name": "Value format valid",
@@ -2179,7 +2179,7 @@
    "field": "phone",
    "old": "(555) 010-3701",
    "new": "(555) 010-7300",
-   "confidence": 0.97,
+   "confidence": 0.95,
    "tier": "auto",
    "recommend": "Approve",
    "reason": "All checks passed.",
@@ -2201,7 +2201,7 @@
     }
    ],
    "edge": null,
-   "submitted": "2026-11-03",
+   "submitted": "2026-11-01",
    "status": "auto_applied",
    "include": true
   },
@@ -2213,10 +2213,10 @@
    "practitioner": "Dr. Tamsin Vantress",
    "npi": "1000000064",
    "type": "UPDATE",
-   "field": "location",
-   "old": "548 Example Street, Suite 25, Sampletown ZZ 00074",
-   "new": "807 Example Street, Suite 22, Sampletown ZZ 00031",
-   "confidence": 0.98,
+   "field": "phone",
+   "old": "(555) 010-3368",
+   "new": "(555) 010-7337",
+   "confidence": 0.93,
    "tier": "auto",
    "recommend": "Approve",
    "reason": "All checks passed.",
@@ -2238,7 +2238,7 @@
     }
    ],
    "edge": null,
-   "submitted": "2026-11-08",
+   "submitted": "2026-10-31",
    "status": "auto_applied",
    "include": true
   },
@@ -2250,10 +2250,10 @@
    "practitioner": "Dr. Elio Aldermoor",
    "npi": "1000000109",
    "type": "UPDATE",
-   "field": "phone",
-   "old": "(555) 010-5033",
-   "new": "(555) 010-7374",
-   "confidence": 0.94,
+   "field": "location",
+   "old": "863 Example Street, Suite 30, Sampletown ZZ 00039",
+   "new": "863 Example Street, Suite 202, Sampletown ZZ 00039",
+   "confidence": 0.92,
    "tier": "auto",
    "recommend": "Approve",
    "reason": "All checks passed.",
@@ -2312,7 +2312,7 @@
     }
    ],
    "edge": null,
-   "submitted": "2026-10-31",
+   "submitted": "2026-11-06",
    "status": "auto_applied",
    "include": true
   },
@@ -2326,8 +2326,8 @@
    "type": "UPDATE",
    "field": "location",
    "old": "632 Example Street, Suite 37, Sampletown ZZ 00086",
-   "new": "828 Example Street, Suite 25, Sampletown ZZ 00034",
-   "confidence": 0.91,
+   "new": "632 Example Street, Suite 204, Sampletown ZZ 00086",
+   "confidence": 0.93,
    "tier": "auto",
    "recommend": "Approve",
    "reason": "All checks passed.",
@@ -2364,6 +2364,80 @@
    "field": "phone",
    "old": "(555) 010-4367",
    "new": "(555) 010-7485",
+   "confidence": 0.94,
+   "tier": "auto",
+   "recommend": "Approve",
+   "reason": "All checks passed.",
+   "checks": [
+    {
+     "name": "Value format valid",
+     "result": "pass",
+     "detail": ""
+    },
+    {
+     "name": "Agrees with synthetic registry or address standard",
+     "result": "pass",
+     "detail": ""
+    },
+    {
+     "name": "No competing submission in the last 30 days",
+     "result": "pass",
+     "detail": ""
+    }
+   ],
+   "edge": null,
+   "submitted": "2026-10-27",
+   "status": "auto_applied",
+   "include": true
+  },
+  {
+   "id": "SYN-C-019",
+   "group": "SYN-G-003",
+   "group_name": "Cedar Vale Synthetic Clinic",
+   "practitioner_id": "SYN-P-0063",
+   "practitioner": "Dr. Mika Sablewood",
+   "npi": "1000000063",
+   "type": "UPDATE",
+   "field": "phone",
+   "old": "(555) 010-3331",
+   "new": "(555) 010-7522",
+   "confidence": 0.91,
+   "tier": "auto",
+   "recommend": "Approve",
+   "reason": "All checks passed.",
+   "checks": [
+    {
+     "name": "Value format valid",
+     "result": "pass",
+     "detail": ""
+    },
+    {
+     "name": "Agrees with synthetic registry or address standard",
+     "result": "pass",
+     "detail": ""
+    },
+    {
+     "name": "No competing submission in the last 30 days",
+     "result": "pass",
+     "detail": ""
+    }
+   ],
+   "edge": null,
+   "submitted": "2026-10-28",
+   "status": "auto_applied",
+   "include": true
+  },
+  {
+   "id": "SYN-C-020",
+   "group": "SYN-G-002",
+   "group_name": "Harborline Synthetic Health Partners",
+   "practitioner_id": "SYN-P-0052",
+   "practitioner": "Dr. Orla Wexcombe",
+   "npi": "1000000052",
+   "type": "UPDATE",
+   "field": "phone",
+   "old": "(555) 010-2924",
+   "new": "(555) 010-7559",
    "confidence": 0.98,
    "tier": "auto",
    "recommend": "Approve",
@@ -2391,17 +2465,17 @@
    "include": true
   },
   {
-   "id": "SYN-C-019",
-   "group": "SYN-G-003",
-   "group_name": "Cedar Vale Synthetic Clinic",
-   "practitioner_id": "SYN-P-0063",
-   "practitioner": "Dr. Mika Sablewood",
-   "npi": "1000000063",
+   "id": "SYN-C-021",
+   "group": "SYN-G-006",
+   "group_name": "Ironwood Synthetic Orthopaedics",
+   "practitioner_id": "SYN-P-0150",
+   "practitioner": "Dr. Saskia Brindlecott",
+   "npi": "1000000150",
    "type": "UPDATE",
-   "field": "phone",
-   "old": "(555) 010-3331",
-   "new": "(555) 010-7522",
-   "confidence": 0.99,
+   "field": "location",
+   "old": "350 Example Street, Suite 31, Sampletown ZZ 00080",
+   "new": "350 Example Street, Suite 208, Sampletown ZZ 00080",
+   "confidence": 0.91,
    "tier": "auto",
    "recommend": "Approve",
    "reason": "All checks passed.",
@@ -2423,22 +2497,96 @@
     }
    ],
    "edge": null,
-   "submitted": "2026-11-01",
+   "submitted": "2026-10-23",
    "status": "auto_applied",
    "include": true
   },
   {
-   "id": "SYN-C-020",
+   "id": "SYN-C-022",
    "group": "SYN-G-002",
    "group_name": "Harborline Synthetic Health Partners",
-   "practitioner_id": "SYN-P-0052",
-   "practitioner": "Dr. Orla Wexcombe",
-   "npi": "1000000052",
+   "practitioner_id": "SYN-P-0047",
+   "practitioner": "Dr. Bram Rookhaven",
+   "npi": "1000000047",
+   "type": "UPDATE",
+   "field": "phone",
+   "old": "(555) 010-2739",
+   "new": "(555) 010-7633",
+   "confidence": 0.95,
+   "tier": "auto",
+   "recommend": "Approve",
+   "reason": "All checks passed.",
+   "checks": [
+    {
+     "name": "Value format valid",
+     "result": "pass",
+     "detail": ""
+    },
+    {
+     "name": "Agrees with synthetic registry or address standard",
+     "result": "pass",
+     "detail": ""
+    },
+    {
+     "name": "No competing submission in the last 30 days",
+     "result": "pass",
+     "detail": ""
+    }
+   ],
+   "edge": null,
+   "submitted": "2026-10-30",
+   "status": "auto_applied",
+   "include": true
+  },
+  {
+   "id": "SYN-C-023",
+   "group": "SYN-G-004",
+   "group_name": "Summit Ridge Synthetic Physicians",
+   "practitioner_id": "SYN-P-0102",
+   "practitioner": "Dr. Jules Yarrowby",
+   "npi": "1000000102",
+   "type": "UPDATE",
+   "field": "phone",
+   "old": "(555) 010-4774",
+   "new": "(555) 010-7670",
+   "confidence": 0.97,
+   "tier": "auto",
+   "recommend": "Approve",
+   "reason": "All checks passed.",
+   "checks": [
+    {
+     "name": "Value format valid",
+     "result": "pass",
+     "detail": ""
+    },
+    {
+     "name": "Agrees with synthetic registry or address standard",
+     "result": "pass",
+     "detail": ""
+    },
+    {
+     "name": "No competing submission in the last 30 days",
+     "result": "pass",
+     "detail": ""
+    }
+   ],
+   "edge": null,
+   "submitted": "2026-10-28",
+   "status": "auto_applied",
+   "include": true
+  },
+  {
+   "id": "SYN-C-024",
+   "group": "SYN-G-004",
+   "group_name": "Summit Ridge Synthetic Physicians",
+   "practitioner_id": "SYN-P-0079",
+   "practitioner": "Dr. Anouk Sablewood",
+   "npi": "1000000079",
    "type": "UPDATE",
    "field": "location",
-   "old": "464 Example Street, Suite 13, Sampletown ZZ 00062",
-   "new": "849 Example Street, Suite 28, Sampletown ZZ 00037",
-   "confidence": 0.95,
+   "old": "653 Example Street, Suite 40, Sampletown ZZ 00089",
+   "new": "653 Example Street, Suite 211, Sampletown ZZ 00089",
+   "confidence": 0.97,
    "tier": "auto",
    "recommend": "Approve",
    "reason": "All checks passed.",
@@ -2465,90 +2613,16 @@
    "include": true
   },
   {
-   "id": "SYN-C-021",
-   "group": "SYN-G-006",
-   "group_name": "Ironwood Synthetic Orthopaedics",
-   "practitioner_id": "SYN-P-0150",
-   "practitioner": "Dr. Saskia Brindlecott",
-   "npi": "1000000150",
-   "type": "UPDATE",
-   "field": "phone",
-   "old": "(555) 010-6550",
-   "new": "(555) 010-7596",
-   "confidence": 0.95,
-   "tier": "auto",
-   "recommend": "Approve",
-   "reason": "All checks passed.",
-   "checks": [
-    {
-     "name": "Value format valid",
-     "result": "pass",
-     "detail": ""
-    },
-    {
-     "name": "Agrees with synthetic registry or address standard",
-     "result": "pass",
-     "detail": ""
-    },
-    {
-     "name": "No competing submission in the last 30 days",
-     "result": "pass",
-     "detail": ""
-    }
-   ],
-   "edge": null,
-   "submitted": "2026-11-02",
-   "status": "auto_applied",
-   "include": true
-  },
-  {
-   "id": "SYN-C-022",
-   "group": "SYN-G-002",
-   "group_name": "Harborline Synthetic Health Partners",
-   "practitioner_id": "SYN-P-0047",
-   "practitioner": "Dr. Bram Rookhaven",
-   "npi": "1000000047",
-   "type": "UPDATE",
-   "field": "phone",
-   "old": "(555) 010-2739",
-   "new": "(555) 010-7633",
-   "confidence": 0.94,
-   "tier": "auto",
-   "recommend": "Approve",
-   "reason": "All checks passed.",
-   "checks": [
-    {
-     "name": "Value format valid",
-     "result": "pass",
-     "detail": ""
-    },
-    {
-     "name": "Agrees with synthetic registry or address standard",
-     "result": "pass",
-     "detail": ""
-    },
-    {
-     "name": "No competing submission in the last 30 days",
-     "result": "pass",
-     "detail": ""
-    }
-   ],
-   "edge": null,
-   "submitted": "2026-10-29",
-   "status": "auto_applied",
-   "include": true
-  },
-  {
-   "id": "SYN-C-023",
+   "id": "SYN-C-025",
    "group": "SYN-G-004",
    "group_name": "Summit Ridge Synthetic Physicians",
-   "practitioner_id": "SYN-P-0102",
-   "practitioner": "Dr. Jules Yarrowby",
-   "npi": "1000000102",
+   "practitioner_id": "SYN-P-0086",
+   "practitioner": "Dr. Ilse Wexcombe",
+   "npi": "1000000086",
    "type": "UPDATE",
    "field": "location",
-   "old": "814 Example Street, Suite 23, Sampletown ZZ 00032",
-   "new": "870 Example Street, Suite 31, Sampletown ZZ 00040",
+   "old": "702 Example Street, Suite 7, Sampletown ZZ 00016",
+   "new": "702 Example Street, Suite 212, Sampletown ZZ 00016",
    "confidence": 0.98,
    "tier": "auto",
    "recommend": "Approve",
@@ -2571,81 +2645,7 @@
     }
    ],
    "edge": null,
-   "submitted": "2026-10-22",
-   "status": "auto_applied",
-   "include": true
-  },
-  {
-   "id": "SYN-C-024",
-   "group": "SYN-G-004",
-   "group_name": "Summit Ridge Synthetic Physicians",
-   "practitioner_id": "SYN-P-0079",
-   "practitioner": "Dr. Anouk Sablewood",
-   "npi": "1000000079",
-   "type": "UPDATE",
-   "field": "location",
-   "old": "653 Example Street, Suite 40, Sampletown ZZ 00089",
-   "new": "877 Example Street, Suite 32, Sampletown ZZ 00041",
-   "confidence": 0.96,
-   "tier": "auto",
-   "recommend": "Approve",
-   "reason": "All checks passed.",
-   "checks": [
-    {
-     "name": "Value format valid",
-     "result": "pass",
-     "detail": ""
-    },
-    {
-     "name": "Agrees with synthetic registry or address standard",
-     "result": "pass",
-     "detail": ""
-    },
-    {
-     "name": "No competing submission in the last 30 days",
-     "result": "pass",
-     "detail": ""
-    }
-   ],
-   "edge": null,
-   "submitted": "2026-11-10",
-   "status": "auto_applied",
-   "include": true
-  },
-  {
-   "id": "SYN-C-025",
-   "group": "SYN-G-004",
-   "group_name": "Summit Ridge Synthetic Physicians",
-   "practitioner_id": "SYN-P-0086",
-   "practitioner": "Dr. Ilse Wexcombe",
-   "npi": "1000000086",
-   "type": "UPDATE",
-   "field": "location",
-   "old": "702 Example Street, Suite 7, Sampletown ZZ 00016",
-   "new": "884 Example Street, Suite 33, Sampletown ZZ 00042",
-   "confidence": 0.92,
-   "tier": "auto",
-   "recommend": "Approve",
-   "reason": "All checks passed.",
-   "checks": [
-    {
-     "name": "Value format valid",
-     "result": "pass",
-     "detail": ""
-    },
-    {
-     "name": "Agrees with synthetic registry or address standard",
-     "result": "pass",
-     "detail": ""
-    },
-    {
-     "name": "No competing submission in the last 30 days",
-     "result": "pass",
-     "detail": ""
-    }
-   ],
-   "edge": null,
-   "submitted": "2026-10-27",
+   "submitted": "2026-10-26",
    "status": "auto_applied",
    "include": true
   },
@@ -2657,10 +2657,10 @@
    "practitioner": "Dr. Wren Sablewood",
    "npi": "1000000138",
    "type": "UPDATE",
-   "field": "location",
-   "old": "266 Example Street, Suite 19, Sampletown ZZ 00068",
-   "new": "891 Example Street, Suite 34, Sampletown ZZ 00043",
-   "confidence": 0.94,
+   "field": "phone",
+   "old": "(555) 010-6106",
+   "new": "(555) 010-7781",
+   "confidence": 0.93,
    "tier": "auto",
    "recommend": "Approve",
    "reason": "All checks passed.",
@@ -2682,7 +2682,7 @@
     }
    ],
    "edge": null,
-   "submitted": "2026-11-04",
+   "submitted": "2026-10-26",
    "status": "auto_applied",
    "include": true
   },
@@ -2694,10 +2694,10 @@
    "practitioner": "Dr. Jules Sablewood",
    "npi": "1000000122",
    "type": "UPDATE",
-   "field": "location",
-   "old": "154 Example Street, Suite 3, Sampletown ZZ 00052",
-   "new": "898 Example Street, Suite 35, Sampletown ZZ 00044",
-   "confidence": 0.97,
+   "field": "phone",
+   "old": "(555) 010-5514",
+   "new": "(555) 010-7818",
+   "confidence": 0.94,
    "tier": "auto",
    "recommend": "Approve",
    "reason": "All checks passed.",
@@ -2733,8 +2733,8 @@
    "type": "UPDATE",
    "field": "location",
    "old": "394 Example Street, Suite 3, Sampletown ZZ 00052",
-   "new": "105 Example Street, Suite 36, Sampletown ZZ 00045",
-   "confidence": 0.93,
+   "new": "394 Example Street, Suite 215, Sampletown ZZ 00052",
+   "confidence": 0.92,
    "tier": "auto",
    "recommend": "Approve",
    "reason": "All checks passed.",
@@ -2756,7 +2756,7 @@
     }
    ],
    "edge": null,
-   "submitted": "2026-11-08",
+   "submitted": "2026-10-27",
    "status": "auto_applied",
    "include": true
   },
@@ -2793,7 +2793,7 @@
     }
    ],
    "edge": null,
-   "submitted": "2026-10-30",
+   "submitted": "2026-10-24",
    "status": "auto_applied",
    "include": true
   },
@@ -2808,6 +2808,302 @@
    "field": "phone",
    "old": "(555) 010-6513",
    "new": "(555) 010-7929",
+   "confidence": 0.98,
+   "tier": "auto",
+   "recommend": "Approve",
+   "reason": "All checks passed.",
+   "checks": [
+    {
+     "name": "Value format valid",
+     "result": "pass",
+     "detail": ""
+    },
+    {
+     "name": "Agrees with synthetic registry or address standard",
+     "result": "pass",
+     "detail": ""
+    },
+    {
+     "name": "No competing submission in the last 30 days",
+     "result": "pass",
+     "detail": ""
+    }
+   ],
+   "edge": null,
+   "submitted": "2026-10-23",
+   "status": "auto_applied",
+   "include": true
+  },
+  {
+   "id": "SYN-C-031",
+   "group": "SYN-G-004",
+   "group_name": "Summit Ridge Synthetic Physicians",
+   "practitioner_id": "SYN-P-0112",
+   "practitioner": "Dr. Orla Thistlewick",
+   "npi": "1000000112",
+   "type": "UPDATE",
+   "field": "location",
+   "old": "884 Example Street, Suite 33, Sampletown ZZ 00042",
+   "new": "884 Example Street, Suite 218, Sampletown ZZ 00042",
+   "confidence": 0.96,
+   "tier": "auto",
+   "recommend": "Approve",
+   "reason": "All checks passed.",
+   "checks": [
+    {
+     "name": "Value format valid",
+     "result": "pass",
+     "detail": ""
+    },
+    {
+     "name": "Agrees with synthetic registry or address standard",
+     "result": "pass",
+     "detail": ""
+    },
+    {
+     "name": "No competing submission in the last 30 days",
+     "result": "pass",
+     "detail": ""
+    }
+   ],
+   "edge": null,
+   "submitted": "2026-11-08",
+   "status": "auto_applied",
+   "include": true
+  },
+  {
+   "id": "SYN-C-032",
+   "group": "SYN-G-002",
+   "group_name": "Harborline Synthetic Health Partners",
+   "practitioner_id": "SYN-P-0057",
+   "practitioner": "Dr. Soren Brindlecott",
+   "npi": "1000000057",
+   "type": "UPDATE",
+   "field": "location",
+   "old": "499 Example Street, Suite 18, Sampletown ZZ 00067",
+   "new": "499 Example Street, Suite 219, Sampletown ZZ 00067",
+   "confidence": 0.94,
+   "tier": "auto",
+   "recommend": "Approve",
+   "reason": "All checks passed.",
+   "checks": [
+    {
+     "name": "Value format valid",
+     "result": "pass",
+     "detail": ""
+    },
+    {
+     "name": "Agrees with synthetic registry or address standard",
+     "result": "pass",
+     "detail": ""
+    },
+    {
+     "name": "No competing submission in the last 30 days",
+     "result": "pass",
+     "detail": ""
+    }
+   ],
+   "edge": null,
+   "submitted": "2026-10-27",
+   "status": "auto_applied",
+   "include": true
+  },
+  {
+   "id": "SYN-C-033",
+   "group": "SYN-G-003",
+   "group_name": "Cedar Vale Synthetic Clinic",
+   "practitioner_id": "SYN-P-0074",
+   "practitioner": "Dr. Leda Lorimount",
+   "npi": "1000000074",
+   "type": "UPDATE",
+   "field": "phone",
+   "old": "(555) 010-3738",
+   "new": "(555) 010-8040",
+   "confidence": 0.91,
+   "tier": "auto",
+   "recommend": "Approve",
+   "reason": "All checks passed.",
+   "checks": [
+    {
+     "name": "Value format valid",
+     "result": "pass",
+     "detail": ""
+    },
+    {
+     "name": "Agrees with synthetic registry or address standard",
+     "result": "pass",
+     "detail": ""
+    },
+    {
+     "name": "No competing submission in the last 30 days",
+     "result": "pass",
+     "detail": ""
+    }
+   ],
+   "edge": null,
+   "submitted": "2026-10-29",
+   "status": "auto_applied",
+   "include": true
+  },
+  {
+   "id": "SYN-C-034",
+   "group": "SYN-G-006",
+   "group_name": "Ironwood Synthetic Orthopaedics",
+   "practitioner_id": "SYN-P-0140",
+   "practitioner": "Dr. Avery Rookhaven",
+   "npi": "1000000140",
+   "type": "UPDATE",
+   "field": "phone",
+   "old": "(555) 010-6180",
+   "new": "(555) 010-8077",
+   "confidence": 0.93,
+   "tier": "auto",
+   "recommend": "Approve",
+   "reason": "All checks passed.",
+   "checks": [
+    {
+     "name": "Value format valid",
+     "result": "pass",
+     "detail": ""
+    },
+    {
+     "name": "Agrees with synthetic registry or address standard",
+     "result": "pass",
+     "detail": ""
+    },
+    {
+     "name": "No competing submission in the last 30 days",
+     "result": "pass",
+     "detail": ""
+    }
+   ],
+   "edge": null,
+   "submitted": "2026-10-31",
+   "status": "auto_applied",
+   "include": true
+  },
+  {
+   "id": "SYN-C-035",
+   "group": "SYN-G-002",
+   "group_name": "Harborline Synthetic Health Partners",
+   "practitioner_id": "SYN-P-0062",
+   "practitioner": "Dr. Jules Thistlewick",
+   "npi": "1000000062",
+   "type": "UPDATE",
+   "field": "phone",
+   "old": "(555) 010-3294",
+   "new": "(555) 010-8114",
+   "confidence": 0.97,
+   "tier": "auto",
+   "recommend": "Approve",
+   "reason": "All checks passed.",
+   "checks": [
+    {
+     "name": "Value format valid",
+     "result": "pass",
+     "detail": ""
+    },
+    {
+     "name": "Agrees with synthetic registry or address standard",
+     "result": "pass",
+     "detail": ""
+    },
+    {
+     "name": "No competing submission in the last 30 days",
+     "result": "pass",
+     "detail": ""
+    }
+   ],
+   "edge": null,
+   "submitted": "2026-10-29",
+   "status": "auto_applied",
+   "include": true
+  },
+  {
+   "id": "SYN-C-036",
+   "group": "SYN-G-002",
+   "group_name": "Harborline Synthetic Health Partners",
+   "practitioner_id": "SYN-P-0032",
+   "practitioner": "Dr. Orla Brindlecott",
+   "npi": "1000000032",
+   "type": "UPDATE",
+   "field": "phone",
+   "old": "(555) 010-2184",
+   "new": "(555) 010-8151",
+   "confidence": 0.97,
+   "tier": "auto",
+   "recommend": "Approve",
+   "reason": "All checks passed.",
+   "checks": [
+    {
+     "name": "Value format valid",
+     "result": "pass",
+     "detail": ""
+    },
+    {
+     "name": "Agrees with synthetic registry or address standard",
+     "result": "pass",
+     "detail": ""
+    },
+    {
+     "name": "No competing submission in the last 30 days",
+     "result": "pass",
+     "detail": ""
+    }
+   ],
+   "edge": null,
+   "submitted": "2026-10-28",
+   "status": "auto_applied",
+   "include": true
+  },
+  {
+   "id": "SYN-C-037",
+   "group": "SYN-G-002",
+   "group_name": "Harborline Synthetic Health Partners",
+   "practitioner_id": "SYN-P-0036",
+   "practitioner": "Dr. Yara Tindermere",
+   "npi": "1000000036",
+   "type": "UPDATE",
+   "field": "phone",
+   "old": "(555) 010-2332",
+   "new": "(555) 010-8188",
+   "confidence": 0.98,
+   "tier": "auto",
+   "recommend": "Approve",
+   "reason": "All checks passed.",
+   "checks": [
+    {
+     "name": "Value format valid",
+     "result": "pass",
+     "detail": ""
+    },
+    {
+     "name": "Agrees with synthetic registry or address standard",
+     "result": "pass",
+     "detail": ""
+    },
+    {
+     "name": "No competing submission in the last 30 days",
+     "result": "pass",
+     "detail": ""
+    }
+   ],
+   "edge": null,
+   "submitted": "2026-10-26",
+   "status": "auto_applied",
+   "include": true
+  },
+  {
+   "id": "SYN-C-038",
+   "group": "SYN-G-002",
+   "group_name": "Harborline Synthetic Health Partners",
+   "practitioner_id": "SYN-P-0046",
+   "practitioner": "Dr. Ilse Marrowby",
+   "npi": "1000000046",
+   "type": "UPDATE",
+   "field": "phone",
+   "old": "(555) 010-2702",
+   "new": "(555) 010-8225",
    "confidence": 0.97,
    "tier": "auto",
    "recommend": "Approve",
@@ -2835,17 +3131,54 @@
    "include": true
   },
   {
-   "id": "SYN-C-031",
+   "id": "SYN-C-039",
    "group": "SYN-G-004",
    "group_name": "Summit Ridge Synthetic Physicians",
-   "practitioner_id": "SYN-P-0112",
-   "practitioner": "Dr. Orla Thistlewick",
-   "npi": "1000000112",
+   "practitioner_id": "SYN-P-0083",
+   "practitioner": "Dr. Mika Lorimount",
+   "npi": "1000000083",
    "type": "UPDATE",
    "field": "phone",
-   "old": "(555) 010-5144",
-   "new": "(555) 010-7966",
+   "old": "(555) 010-4071",
+   "new": "(555) 010-8262",
    "confidence": 0.93,
+   "tier": "auto",
+   "recommend": "Approve",
+   "reason": "All checks passed.",
+   "checks": [
+    {
+     "name": "Value format valid",
+     "result": "pass",
+     "detail": ""
+    },
+    {
+     "name": "Agrees with synthetic registry or address standard",
+     "result": "pass",
+     "detail": ""
+    },
+    {
+     "name": "No competing submission in the last 30 days",
+     "result": "pass",
+     "detail": ""
+    }
+   ],
+   "edge": null,
+   "submitted": "2026-11-08",
+   "status": "auto_applied",
+   "include": true
+  },
+  {
+   "id": "SYN-C-040",
+   "group": "SYN-G-002",
+   "group_name": "Harborline Synthetic Health Partners",
+   "practitioner_id": "SYN-P-0061",
+   "practitioner": "Dr. Rowan Wexcombe",
+   "npi": "1000000061",
+   "type": "UPDATE",
+   "field": "location",
+   "old": "527 Example Street, Suite 22, Sampletown ZZ 00071",
+   "new": "527 Example Street, Suite 227, Sampletown ZZ 00071",
+   "confidence": 0.91,
    "tier": "auto",
    "recommend": "Approve",
    "reason": "All checks passed.",
@@ -2872,339 +3205,6 @@
    "include": true
   },
   {
-   "id": "SYN-C-032",
-   "group": "SYN-G-002",
-   "group_name": "Harborline Synthetic Health Partners",
-   "practitioner_id": "SYN-P-0057",
-   "practitioner": "Dr. Soren Brindlecott",
-   "npi": "1000000057",
-   "type": "UPDATE",
-   "field": "phone",
-   "old": "(555) 010-3109",
-   "new": "(555) 010-8003",
-   "confidence": 0.92,
-   "tier": "auto",
-   "recommend": "Approve",
-   "reason": "All checks passed.",
-   "checks": [
-    {
-     "name": "Value format valid",
-     "result": "pass",
-     "detail": ""
-    },
-    {
-     "name": "Agrees with synthetic registry or address standard",
-     "result": "pass",
-     "detail": ""
-    },
-    {
-     "name": "No competing submission in the last 30 days",
-     "result": "pass",
-     "detail": ""
-    }
-   ],
-   "edge": null,
-   "submitted": "2026-11-07",
-   "status": "auto_applied",
-   "include": true
-  },
-  {
-   "id": "SYN-C-033",
-   "group": "SYN-G-003",
-   "group_name": "Cedar Vale Synthetic Clinic",
-   "practitioner_id": "SYN-P-0074",
-   "practitioner": "Dr. Leda Lorimount",
-   "npi": "1000000074",
-   "type": "UPDATE",
-   "field": "phone",
-   "old": "(555) 010-3738",
-   "new": "(555) 010-8040",
-   "confidence": 0.95,
-   "tier": "auto",
-   "recommend": "Approve",
-   "reason": "All checks passed.",
-   "checks": [
-    {
-     "name": "Value format valid",
-     "result": "pass",
-     "detail": ""
-    },
-    {
-     "name": "Agrees with synthetic registry or address standard",
-     "result": "pass",
-     "detail": ""
-    },
-    {
-     "name": "No competing submission in the last 30 days",
-     "result": "pass",
-     "detail": ""
-    }
-   ],
-   "edge": null,
-   "submitted": "2026-11-02",
-   "status": "auto_applied",
-   "include": true
-  },
-  {
-   "id": "SYN-C-034",
-   "group": "SYN-G-006",
-   "group_name": "Ironwood Synthetic Orthopaedics",
-   "practitioner_id": "SYN-P-0140",
-   "practitioner": "Dr. Avery Rookhaven",
-   "npi": "1000000140",
-   "type": "UPDATE",
-   "field": "phone",
-   "old": "(555) 010-6180",
-   "new": "(555) 010-8077",
-   "confidence": 0.96,
-   "tier": "auto",
-   "recommend": "Approve",
-   "reason": "All checks passed.",
-   "checks": [
-    {
-     "name": "Value format valid",
-     "result": "pass",
-     "detail": ""
-    },
-    {
-     "name": "Agrees with synthetic registry or address standard",
-     "result": "pass",
-     "detail": ""
-    },
-    {
-     "name": "No competing submission in the last 30 days",
-     "result": "pass",
-     "detail": ""
-    }
-   ],
-   "edge": null,
-   "submitted": "2026-11-07",
-   "status": "auto_applied",
-   "include": true
-  },
-  {
-   "id": "SYN-C-035",
-   "group": "SYN-G-002",
-   "group_name": "Harborline Synthetic Health Partners",
-   "practitioner_id": "SYN-P-0062",
-   "practitioner": "Dr. Jules Thistlewick",
-   "npi": "1000000062",
-   "type": "UPDATE",
-   "field": "phone",
-   "old": "(555) 010-3294",
-   "new": "(555) 010-8114",
-   "confidence": 0.99,
-   "tier": "auto",
-   "recommend": "Approve",
-   "reason": "All checks passed.",
-   "checks": [
-    {
-     "name": "Value format valid",
-     "result": "pass",
-     "detail": ""
-    },
-    {
-     "name": "Agrees with synthetic registry or address standard",
-     "result": "pass",
-     "detail": ""
-    },
-    {
-     "name": "No competing submission in the last 30 days",
-     "result": "pass",
-     "detail": ""
-    }
-   ],
-   "edge": null,
-   "submitted": "2026-11-07",
-   "status": "auto_applied",
-   "include": true
-  },
-  {
-   "id": "SYN-C-036",
-   "group": "SYN-G-002",
-   "group_name": "Harborline Synthetic Health Partners",
-   "practitioner_id": "SYN-P-0032",
-   "practitioner": "Dr. Orla Brindlecott",
-   "npi": "1000000032",
-   "type": "UPDATE",
-   "field": "location",
-   "old": "324 Example Street, Suite 33, Sampletown ZZ 00042",
-   "new": "161 Example Street, Suite 4, Sampletown ZZ 00053",
-   "confidence": 0.96,
-   "tier": "auto",
-   "recommend": "Approve",
-   "reason": "All checks passed.",
-   "checks": [
-    {
-     "name": "Value format valid",
-     "result": "pass",
-     "detail": ""
-    },
-    {
-     "name": "Agrees with synthetic registry or address standard",
-     "result": "pass",
-     "detail": ""
-    },
-    {
-     "name": "No competing submission in the last 30 days",
-     "result": "pass",
-     "detail": ""
-    }
-   ],
-   "edge": null,
-   "submitted": "2026-10-29",
-   "status": "auto_applied",
-   "include": true
-  },
-  {
-   "id": "SYN-C-037",
-   "group": "SYN-G-002",
-   "group_name": "Harborline Synthetic Health Partners",
-   "practitioner_id": "SYN-P-0036",
-   "practitioner": "Dr. Yara Tindermere",
-   "npi": "1000000036",
-   "type": "UPDATE",
-   "field": "phone",
-   "old": "(555) 010-2332",
-   "new": "(555) 010-8188",
-   "confidence": 0.92,
-   "tier": "auto",
-   "recommend": "Approve",
-   "reason": "All checks passed.",
-   "checks": [
-    {
-     "name": "Value format valid",
-     "result": "pass",
-     "detail": ""
-    },
-    {
-     "name": "Agrees with synthetic registry or address standard",
-     "result": "pass",
-     "detail": ""
-    },
-    {
-     "name": "No competing submission in the last 30 days",
-     "result": "pass",
-     "detail": ""
-    }
-   ],
-   "edge": null,
-   "submitted": "2026-11-03",
-   "status": "auto_applied",
-   "include": true
-  },
-  {
-   "id": "SYN-C-038",
-   "group": "SYN-G-002",
-   "group_name": "Harborline Synthetic Health Partners",
-   "practitioner_id": "SYN-P-0046",
-   "practitioner": "Dr. Ilse Marrowby",
-   "npi": "1000000046",
-   "type": "UPDATE",
-   "field": "location",
-   "old": "422 Example Street, Suite 7, Sampletown ZZ 00056",
-   "new": "175 Example Street, Suite 6, Sampletown ZZ 00055",
-   "confidence": 0.98,
-   "tier": "auto",
-   "recommend": "Approve",
-   "reason": "All checks passed.",
-   "checks": [
-    {
-     "name": "Value format valid",
-     "result": "pass",
-     "detail": ""
-    },
-    {
-     "name": "Agrees with synthetic registry or address standard",
-     "result": "pass",
-     "detail": ""
-    },
-    {
-     "name": "No competing submission in the last 30 days",
-     "result": "pass",
-     "detail": ""
-    }
-   ],
-   "edge": null,
-   "submitted": "2026-10-22",
-   "status": "auto_applied",
-   "include": true
-  },
-  {
-   "id": "SYN-C-039",
-   "group": "SYN-G-004",
-   "group_name": "Summit Ridge Synthetic Physicians",
-   "practitioner_id": "SYN-P-0083",
-   "practitioner": "Dr. Mika Lorimount",
-   "npi": "1000000083",
-   "type": "TERM",
-   "field": "status",
-   "old": "active",
-   "new": "terminated 2026-10-31",
-   "confidence": 0.97,
-   "tier": "auto",
-   "recommend": "Approve",
-   "reason": "All checks passed; no members assigned.",
-   "checks": [
-    {
-     "name": "Termination date present and not in the future",
-     "result": "pass",
-     "detail": ""
-    },
-    {
-     "name": "Clinician exists on the plan record",
-     "result": "pass",
-     "detail": ""
-    },
-    {
-     "name": "No members assigned as primary care clinician",
-     "result": "pass",
-     "detail": ""
-    }
-   ],
-   "edge": null,
-   "submitted": "2026-10-23",
-   "status": "auto_applied",
-   "include": true
-  },
-  {
-   "id": "SYN-C-040",
-   "group": "SYN-G-002",
-   "group_name": "Harborline Synthetic Health Partners",
-   "practitioner_id": "SYN-P-0061",
-   "practitioner": "Dr. Rowan Wexcombe",
-   "npi": "1000000061",
-   "type": "UPDATE",
-   "field": "location",
-   "old": "527 Example Street, Suite 22, Sampletown ZZ 00071",
-   "new": "189 Example Street, Suite 8, Sampletown ZZ 00057",
-   "confidence": 0.95,
-   "tier": "auto",
-   "recommend": "Approve",
-   "reason": "All checks passed.",
-   "checks": [
-    {
-     "name": "Value format valid",
-     "result": "pass",
-     "detail": ""
-    },
-    {
-     "name": "Agrees with synthetic registry or address standard",
-     "result": "pass",
-     "detail": ""
-    },
-    {
-     "name": "No competing submission in the last 30 days",
-     "result": "pass",
-     "detail": ""
-    }
-   ],
-   "edge": null,
-   "submitted": "2026-10-30",
-   "status": "auto_applied",
-   "include": true
-  },
-  {
    "id": "SYN-C-041",
    "group": "SYN-G-005",
    "group_name": "Lakeshore Synthetic Pediatrics",
@@ -3214,8 +3214,8 @@
    "type": "ADD",
    "field": "record",
    "old": "Not on plan record",
-   "new": "Internal Medicine",
-   "confidence": 0.85,
+   "new": "Cardiology",
+   "confidence": 0.82,
    "tier": "review",
    "recommend": "Review",
    "reason": "New clinician is not yet credentialed with the plan: route to credentialing before activation.",
@@ -3242,7 +3242,7 @@
     }
    ],
    "edge": "not_credentialed",
-   "submitted": "2026-11-05",
+   "submitted": "2026-11-10",
    "status": "pending",
    "include": true
   },
@@ -3256,8 +3256,8 @@
    "type": "UPDATE",
    "field": "specialty",
    "old": "Orthopaedic Surgery",
-   "new": "Family Medicine",
-   "confidence": 0.71,
+   "new": "Pediatrics",
+   "confidence": 0.57,
    "tier": "review",
    "recommend": "Review",
    "reason": "Low confidence: value disagrees with the synthetic registry.",
@@ -3294,7 +3294,7 @@
    "field": "status",
    "old": "active",
    "new": "terminated 2026-11-30",
-   "confidence": 0.91,
+   "confidence": 0.93,
    "tier": "review",
    "recommend": "Review",
    "reason": "Primary care clinician with assigned members: member reassignment is needed before termination.",
@@ -3316,7 +3316,7 @@
     }
    ],
    "edge": "high_risk",
-   "submitted": "2026-11-05",
+   "submitted": "2026-11-07",
    "status": "pending",
    "include": true
   },
@@ -3331,7 +3331,7 @@
    "field": "location",
    "old": "380 Example Street, Suite 1, Sampletown ZZ 00050",
    "new": "417 Example Street, Suite 12, Sampletown ZZ 00021",
-   "confidence": 0.66,
+   "confidence": 0.62,
    "tier": "review",
    "recommend": "Review",
    "reason": "A competing submission arrived in the last 30 days.",
@@ -3353,7 +3353,7 @@
     }
    ],
    "edge": "conflict",
-   "submitted": "2026-11-03",
+   "submitted": "2026-11-06",
    "status": "pending",
    "include": true
   },
@@ -3367,8 +3367,8 @@
    "type": "ADD",
    "field": "record",
    "old": "Not on plan record",
-   "new": "Pediatrics",
-   "confidence": 0.84,
+   "new": "Dermatology",
+   "confidence": 0.82,
    "tier": "review",
    "recommend": "Review",
    "reason": "New clinician is not yet credentialed with the plan: route to credentialing before activation.",
@@ -3395,7 +3395,7 @@
     }
    ],
    "edge": "not_credentialed",
-   "submitted": "2026-11-02",
+   "submitted": "2026-11-09",
    "status": "pending",
    "include": true
   },
@@ -3409,8 +3409,8 @@
    "type": "UPDATE",
    "field": "specialty",
    "old": "Physician Assistant",
-   "new": "Orthopaedic Surgery",
-   "confidence": 0.66,
+   "new": "Pediatrics",
+   "confidence": 0.73,
    "tier": "review",
    "recommend": "Review",
    "reason": "Low confidence: value disagrees with the synthetic registry.",
@@ -3432,7 +3432,7 @@
     }
    ],
    "edge": "low_confidence",
-   "submitted": "2026-11-02",
+   "submitted": "2026-11-09",
    "status": "pending",
    "include": true
   },
@@ -3447,7 +3447,7 @@
    "field": "status",
    "old": "active",
    "new": "terminated 2026-11-30",
-   "confidence": 0.94,
+   "confidence": 0.93,
    "tier": "review",
    "recommend": "Review",
    "reason": "Primary care clinician with assigned members: member reassignment is needed before termination.",
@@ -3469,7 +3469,7 @@
     }
    ],
    "edge": "high_risk",
-   "submitted": "2026-11-03",
+   "submitted": "2026-11-06",
    "status": "pending",
    "include": true
   },
@@ -3484,7 +3484,7 @@
    "field": "location",
    "old": "245 Example Street, Suite 16, Sampletown ZZ 00065",
    "new": "445 Example Street, Suite 16, Sampletown ZZ 00025",
-   "confidence": 0.62,
+   "confidence": 0.65,
    "tier": "review",
    "recommend": "Review",
    "reason": "A competing submission arrived in the last 30 days.",
@@ -3506,7 +3506,7 @@
     }
    ],
    "edge": "conflict",
-   "submitted": "2026-11-06",
+   "submitted": "2026-11-04",
    "status": "pending",
    "include": true
   }

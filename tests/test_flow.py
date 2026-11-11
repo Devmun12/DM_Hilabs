@@ -37,7 +37,7 @@ def run(page, tag):
     page.fill("#f-q", "")
     page.click("#needs")
     pending = page.locator("#qbody tr").count()
-    assert pending == 14, pending
+    assert pending == 16, pending
     page.click("#open-SYN-C-009")
     assert "Low confidence" in page.inner_text("#detail")
     page.screenshot(path=f"{OUT}/{tag}_3_review_detail.png", full_page=True)
@@ -62,7 +62,7 @@ def run(page, tag):
     # Step 3: outcomes update
     page.click("#nav-outcomes")
     txt = page.inner_text("#view")
-    assert "34 of 48" in txt and "Rejected: Failed licence" in txt, txt[:400]
+    assert "32 of 48" in txt and "Rejected: Failed licence" in txt, txt[:400]
     page.screenshot(path=f"{OUT}/{tag}_4_outcomes.png", full_page=True)
     page.click("#nav-how")
     assert "What this prototype proves" in page.inner_text("#view")
