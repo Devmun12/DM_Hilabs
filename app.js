@@ -19,7 +19,7 @@ function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.ad
 
 function reset() {
   clock = 0;
-  S = { view: 'start', roster: clone(DATA.roster), changes: clone(DATA.changes), audit: [], uploaded: false, submitted: false, sel: null, mode: '', f: { type: '', status: '', q: '' }, seen: false };
+  S = { view: 'start', roster: clone(DATA.roster), changes: clone(DATA.changes), audit: [], uploaded: false, submitted: false, attested: false, sel: null, mode: '', f: { type: '', status: '', q: '' }, seen: false };
   S.changes.forEach(c => { c.history = c.status === 'draft' ? [] : [{ t: c.submitted + ' 08:00', actor: 'AI validation', id: c.id, action: c.status === 'auto_applied' ? `Scored ${c.confidence}; all checks passed; auto-applied` : `Scored ${c.confidence}; routed to review` }]; });
   log('System', 'Demo reset to the seeded synthetic dataset');
   go('start');
@@ -71,13 +71,13 @@ function charts(m) {
   live().filter(c => c.status === 'pending').forEach(c => by[c.type] = (by[c.type] || 0) + 1);
   const max = Math.max(1, ...Object.values(by));
   const bars = Object.entries(by).sort((a, b) => b[1] - a[1]).map(([k, v]) => `<div class="hb"><span>${esc(TYPE[k])}</span><div class="bar after" style="width:${Math.max(6, 100 * v / max)}%"></div><b>${v}</b></div>`).join('') || '<p class="muted">Nothing is waiting for review.</p>';
-  return `<div class="grid2"><div class="card"><h2>Changes by status</h2><p class="insight">${m.autoPct}% needed no manual touch; a person decides the rest.</p><div class="row"><div class="donut" role="img" aria-label="${m.auto} auto-applied, ${m.pend} need review, ${m.decided} decided" style="background:conic-gradient(#73b124 0 ${a1}deg,#f0b818 ${a1}deg ${a2}deg,#0a399e ${a2}deg 360deg)"><div><small>Total Count</small><b>${m.n}</b></div></div>
+  return `<div class="grid2"><div class="card"><h2>Changes by status</h2><p class="insight">${m.autoPct}% needed no payer review; a person decides the rest.</p><div class="row"><div class="donut" role="img" aria-label="${m.auto} auto-applied, ${m.pend} need review, ${m.decided} decided" style="background:conic-gradient(#73b124 0 ${a1}deg,#f0b818 ${a1}deg ${a2}deg,#0a399e ${a2}deg 360deg)"><div><small>Total Count</small><b>${m.n}</b></div></div>
   <ul class="plain legend"><li><i style="background:#73b124"></i>Applied automatically <b>${m.auto}</b></li><li><i style="background:#f0b818"></i>Needs review <b>${m.pend}</b></li><li><i style="background:#0a399e"></i>Decided by a reviewer <b>${m.decided}</b></li></ul></div></div>
   <div class="card"><h2>Waiting for review, by type</h2><p class="insight">Adds and terminations always come to a person.</p>${bars}</div></div>`;
 }
 function funnel(m) {
   const st = [['Received', m.n], ['Mapped and matched', m.n], ['Applied automatically', m.auto], ['Decided by a reviewer', m.decided], ['Waiting for review', m.pend]];
-  return `<div class="card"><h2>Roster change funnel</h2><div class="funnel">${st.map((x, i) => `<div class="f${i}"><span>${x[0]}</span><b>${x[1]} changes</b></div>`).join('')}</div></div>`;
+  return `<div class="card"><h2>Processing status</h2><div class="funnel">${st.map((x, i) => `<div class="f${i}"><span>${x[0]}</span><b>${x[1]} changes</b></div>`).join('')}</div></div>`;
 }
 
 // ---------- views ----------
@@ -90,7 +90,7 @@ function vStart() {
   <div class="steps">
   ${step(1, d1, 'Provider group', 'Act as the roster administrator at Northfield Synthetic Medical Group. Upload the sample file, check the diff and confirm.', 'provider', 'Open provider view')}
   ${step(2, d2, 'Plan review queue', 'Act as a plan operations analyst. Open a flagged change, read the evidence, then approve, edit or reject it.', 'queue', 'Open review queue')}
-  ${step(3, d3, 'Outcomes', 'See how the numbers move: share applied without manual touch, roster freshness, and the audit trail.', 'outcomes', 'Open outcomes')}
+  ${step(3, d3, 'Outcomes', 'See how the numbers move: share applied without payer review, roster freshness, and the audit trail.', 'outcomes', 'Open outcomes')}
   </div>`;
 }
 function changeText(c) { return `<span class="old">${esc(c.old)}</span> → <b>${esc(c.new)}</b>`; }
@@ -98,7 +98,7 @@ function vProvider() {
   const g = DATA.groups.find(x => x.id === G1), mine = S.roster.filter(r => r.group === G1 && r.status === 'active');
   const stale = mine.filter(r => days(r.last_verified) > 90).length, drafts = S.changes.filter(c => c.group === G1 && DATA.changes.find(d => d.id === c.id).status === 'draft');
   let body;
-  if (!S.uploaded) body = `<div class="card"><h2>Step 1: send the roster you already keep</h2><p>No template and no re-typing. Any spreadsheet layout is accepted; the system maps the columns.</p>
+  if (!S.uploaded) body = `<div class="card"><h2>Step 1: send the roster you already keep</h2><p>Try the synthetic sample file. Production would support validated CSV/XLSX layouts, with mapping reviewed before submission.</p>
     <button class="btn" data-act="upload" id="upload">Upload sample roster file (simulated)</button></div>
     <div class="card"><h2>What the plans have on file for your group today</h2><div class="tw"><table><thead><tr><th>Clinician</th><th>NPI (synthetic)</th><th>Specialty</th><th>Phone</th><th>Last verified</th></tr></thead><tbody>
     ${mine.slice(0, 8).map(r => `<tr><td>${esc(r.name)}</td><td>${esc(r.npi)}</td><td>${esc(r.specialty)}</td><td>${esc(r.phone)}</td><td>${esc(r.last_verified)} ${days(r.last_verified) > 90 ? chip('Over 90 days', 'c-amber') : chip('Current', 'c-green')}</td></tr>`).join('')}
@@ -109,9 +109,10 @@ function vProvider() {
     <div class="card"><h2>Step 2: check the ${drafts.length} differences</h2><div class="tw"><table><thead><tr><th>Include</th><th>Clinician</th><th>Type</th><th>Change</th><th>What happens next</th></tr></thead><tbody>
     ${drafts.map(c => `<tr><td><input type="checkbox" id="inc-${c.id}" data-inc="${c.id}" ${c.include ? 'checked' : ''} aria-label="Include change for ${esc(c.practitioner)}"></td><td>${esc(c.practitioner)}</td><td>${esc(TYPE[c.type])}</td><td>${changeText(c)}</td><td>${c.tier === 'auto' ? chip('Applies automatically', 'c-green') : chip('Plan will review', 'c-amber')}<div class="muted">${esc(c.reason)}</div></td></tr>`).join('')}
     </tbody></table></div>
-    <p>By confirming you also attest that the other ${mine.length - 9} clinicians on file are correct as of ${DEMO_DATE}.</p>
-    <button class="btn navy" data-act="submit" id="submit">Confirm ${inc} changes and send to ${g.plans.length} plans</button></div>`;
-  } else body = `<div class="card"><div class="row" style="justify-content:space-between"><h2>Sent to ${g.plans.map(esc).join(', ')}</h2><button class="btn outline small" data-act="exportReceipt" id="export-receipt">Download receipt (CSV)</button></div><p>One submission reached every plan your group works with. You can see the status of each change here, so nobody needs to call.</p><div class="tw"><table><thead><tr><th>Clinician</th><th>Type</th><th>Change</th><th>Status at the plans</th></tr></thead><tbody>
+    <details class="attestation"><summary>Review unchanged records before attesting</summary><ul>${mine.filter(r => !drafts.some(c => c.practitioner_id === r.id)).map(r => `<li>${esc(r.name)} · ${esc(r.location)} · ${esc(r.phone)}</li>`).join('')}</ul></details>
+    <label class="attestation"><input type="checkbox" id="attest" data-attest="1" ${S.attested ? 'checked' : ''}> I am authorized for this group and have reviewed the unchanged records above. Excluded or unresolved changes are not marked verified.</label>
+    <button class="btn navy" data-act="submit" id="submit" ${!S.attested ? 'disabled' : ''}>Confirm ${inc} changes and send to ${g.plans.length} plans</button></div>`;
+  } else body = `<div class="card"><div class="row" style="justify-content:space-between"><h2>Sent to ${g.plans.map(esc).join(', ')}</h2><button class="btn outline small" data-act="exportReceipt" id="export-receipt">Download receipt (CSV)</button></div><p>Submission simulated for the three authorized demo plans. Status below represents the shared demo provider record; claims and public-directory delivery are not connected or confirmed.</p><div class="tw"><table><thead><tr><th>Clinician</th><th>Type</th><th>Change</th><th>Demo record status</th></tr></thead><tbody>
     ${drafts.map(c => `<tr><td>${esc(c.practitioner)}</td><td>${esc(TYPE[c.type])}</td><td>${changeText(c)}</td><td>${chip(...STATUS[c.status])}</td></tr>`).join('')}
     </tbody></table></div><button class="btn" data-act="go" data-id="queue" id="to-queue">Next: see the plan review queue</button></div>`;
   return `<div class="card"><h1>${esc(g.name)}</h1><p class="muted">${esc(g.id)} · roster administrator view · sends rosters to ${g.plans.length} plans</p></div>
@@ -122,7 +123,7 @@ function vProvider() {
 function rows() {
   const f = S.f, q = f.q.trim().toLowerCase();
   const list = live().filter(c => (!f.type || c.type === f.type) && (!f.status || c.status === f.status || (f.status === 'decided' && ['approved', 'edited', 'rejected'].includes(c.status))) && (!q || (c.practitioner + c.group_name + c.id).toLowerCase().includes(q)));
-  if (!list.length) return '<tr><td colspan="7" class="muted">No changes match these filters.</td></tr>';
+  if (!list.length) return '<tr><td colspan="8" class="muted">No changes match these filters.</td></tr>';
   return list.map(c => `<tr><td>${esc(c.id)}</td><td>${esc(c.group_name)}</td><td>${esc(c.practitioner)}</td><td>${esc(TYPE[c.type])}</td><td>${changeText(c)}</td><td>${Math.round(c.confidence * 100)}%</td><td>${chip(...STATUS[c.status])}</td><td><button class="btn outline small" data-act="open" data-id="${c.id}" id="open-${c.id}">Open</button></td></tr>`).join('');
 }
 function vDetail(c) {
@@ -146,8 +147,8 @@ function vQueue() {
   const st = Object.fromEntries(Object.entries(STATUS).filter(([k]) => k !== 'draft' && k !== 'withdrawn'));
   return `<div class="card"><h1>Plan review queue</h1><p class="muted">Synthetic Plan A · operations analyst view · only changes that need a human decision wait here</p></div>
   <div class="tiles">
-  <div class="card tile"><div class="v">${m.n}</div><div class="l">Roster changes received</div><div class="b muted">Before: every one keyed by hand</div></div>
-  <div class="card tile"><div class="v">${m.autoPct}%</div><div class="l">Applied without manual touch</div><div class="b muted">Before: 0%</div></div>
+  <div class="card tile"><div class="v">${m.n}</div><div class="l">Roster changes received</div><div class="b muted">Illustrative manual baseline</div></div>
+  <div class="card tile"><div class="v">${m.autoPct}%</div><div class="l">Applied without payer review</div><div class="b muted">Before: 0%</div></div>
   <div class="card tile"><div class="v">${m.pend}</div><div class="l">Waiting for review</div><div class="b muted">${m.decided} decided in this session</div></div>
   <div class="card tile"><div class="v">${m.freshAfter}%</div><div class="l">Roster verified in the last 90 days</div><div class="b muted">Before: ${m.freshBefore}%</div></div></div>
   ${charts(m)}
@@ -162,21 +163,21 @@ function vQueue() {
 function vOutcomes() {
   S.seen = true; const m = metrics(), w = (a, b) => Math.max(2, Math.round(100 * a / Math.max(b, 1)));
   const cmp = (label, b, a, unit) => `<div class="card"><h2>${label}</h2><div class="muted">Before (manual): ${b}${unit}</div><div class="bar" style="width:${w(b, Math.max(a, b))}%"></div><div>With the exchange: <b>${a}${unit}</b></div><div class="bar after" style="width:${w(a, Math.max(a, b))}%"></div></div>`;
-  return `<div class="card"><h1>Outcomes</h1><p class="muted">These numbers update as you submit, approve, edit and reject. They are computed from the synthetic dataset and illustrate the metrics in the deck; they are not forecasts.</p></div>
-  <div class="tiles">${cmp('Changes needing a manual touch', m.n, m.n - m.auto, '')}${cmp('Staff minutes on these changes (illustrative)', m.minBefore, m.minAfter, ' min')}${cmp('Roster verified in the last 90 days', m.freshBefore, m.freshAfter, '%')}</div>
+  return `<div class="card"><h1>Outcomes</h1><p class="muted">These numbers update as you submit, approve, edit and reject. They are computed from the synthetic dataset and illustrate the metrics in the deck; they are not forecasts. Time estimates exclude preparation, provider review, support and downstream processing. Recent confirmation is not proof of accuracy.</p></div>
+  <div class="tiles">${cmp('Changes needing a manual touch', m.n, m.n - m.auto, '')}${cmp('Estimated review minutes', m.minBefore, m.minAfter, ' min')}${cmp('Roster verified in the last 90 days', m.freshBefore, m.freshAfter, '%')}</div>
   ${funnel(m)}
   <div class="card"><h2>How these map to the deck's launch metrics</h2><div class="tw"><table><thead><tr><th>On screen</th><th>Value now</th><th>Deck metric and threshold</th></tr></thead><tbody>
-  <tr><td>Applied without manual touch</td><td>${m.autoPct}% (${m.auto} of ${m.n})</td><td>Changes applied without manual touch: 40% or more at pilot day 90</td></tr>
+  <tr><td>Applied without payer review</td><td>${m.autoPct}% (${m.auto} of ${m.n})</td><td>Changes applied without payer review: 40% or more at pilot day 90</td></tr>
   <tr><td>Roster verified in the last 90 days</td><td>${m.freshAfter}% (was ${m.freshBefore}%)</td><td>North star: 80% or more for pilot groups</td></tr>
   <tr><td>Waiting for review / decided</td><td>${m.pend} / ${m.decided}</td><td>Cycle time: 2 business days or less from submission to plan record</td></tr>
   <tr><td>Staff minutes</td><td>${m.minBefore} → ${m.minAfter} min</td><td>Assumes ${MIN_MANUAL} min to key a change by hand and ${MIN_REVIEW} min to review an exception (assumption A14, to be measured)</td></tr></tbody></table></div></div>
   <div class="card"><div class="row" style="justify-content:space-between"><h2>Audit log (most recent first)</h2><button class="btn outline small" data-act="exportAudit" id="export-audit">Export CSV</button></div><ul class="plain">${S.audit.slice(0, 40).map(h => `<li><span class="muted">${esc(h.t)}</span> · <b>${esc(h.actor)}</b>${h.id ? ' · ' + esc(h.id) : ''}: ${esc(h.action)}</li>`).join('')}</ul></div>`;
 }
 function vHow() {
-  const s = [['Send', 'The group uploads or emails the roster file it already keeps. No template.', 'Slide 8'], ['Map and match', 'AI maps columns to a standard roster layout and matches each row to a clinician on the plan record.', 'Slide 12'], ['Diff', 'Only differences are shown: adds, terminations, updates, duplicates, conflicts.', 'Slide 8'], ['Confirm', 'The group confirms the changes and attests that everything else is correct.', 'Slide 8'], ['Validate and route', 'Each change gets checks and a confidence score. Only contact-detail updates (phone, suite) apply automatically, and only at 90% confidence or more with every check passed. Adds, terminations, specialty changes and conflicts always go to a person.', 'Slide 12'], ['Review exceptions', 'Plan staff approve, edit or reject with a reason. New clinicians are never loaded as participating automatically: delegated-group adds need a reviewer to confirm the effective date, others go to credentialing. A clinician missing from a file is never treated as a termination.', 'Slides 8 and 12'], ['Record and measure', 'Every step is written to an audit trail, and the launch metrics are computed from those events.', 'Slide 13']];
+  const s = [['Send', 'The group uploads or emails the roster file it already keeps. No template.', 'Slide 8'], ['Map and match', 'AI maps columns to a standard roster layout and matches each row to a clinician on the plan record.', 'Slide 12'], ['Diff', 'Only differences are shown: adds, terminations, updates, duplicates, conflicts.', 'Slide 8'], ['Confirm', 'The group confirms the changes and attests that everything else is correct.', 'Slide 8'], ['Validate and route', 'Each change gets checks and a confidence score. Only contact-detail updates (phone, suite) apply automatically, and only at a simulated score of 90% or more with every check passed. Adds, terminations, specialty changes and conflicts always go to a person.', 'Slide 12'], ['Review exceptions', 'Plan staff approve, edit or reject with a reason. New clinicians are never loaded as participating automatically: delegated-group adds need a reviewer to confirm the effective date, others go to credentialing. A clinician missing from a file is never treated as a termination.', 'Slides 8 and 12'], ['Record and measure', 'Every step is written to an audit trail, and the launch metrics are computed from those events.', 'Slide 13']];
   return `<div class="card"><h1>How it works</h1><p class="muted">The flow this prototype demonstrates, and where each part is explained in the deck.</p></div>
   <div class="card"><div class="tw"><table><thead><tr><th>Step</th><th>What happens</th><th>Deck</th></tr></thead><tbody>${s.map((x, i) => `<tr><td><b>${i + 1}. ${x[0]}</b></td><td>${x[1]}</td><td>${x[2]}</td></tr>`).join('')}</tbody></table></div></div>
-  <div class="card"><h2>What this prototype proves, and what it does not</h2><ul><li><b>Shows:</b> the provider's task is short, plan staff handle exceptions only, and every decision is traceable.</li><li><b>Does not show:</b> real model accuracy (scores and checks are simulated), real provider willingness to use it, or integration with plan systems.</li><li><b>Data:</b> ${DATA.roster.length} synthetic clinicians in ${DATA.groups.length} synthetic groups and ${DATA.changes.length} synthetic roster changes, generated by a seeded script. Edge cases included: low confidence, conflicting records, duplicate match, failed licence check, primary care termination with assigned members.</li></ul></div>`;
+  <div class="card"><h2>What this prototype demonstrates</h2><ul><li><b>Shows:</b> the proposed task sequence, exception review and decision history. User effort and production accuracy still need measurement.</li><li><b>Does not show:</b> real model accuracy (scores and checks are simulated), real provider willingness to use it, or integration with plan systems.</li><li><b>Data:</b> ${DATA.roster.length} synthetic clinicians in ${DATA.groups.length} synthetic groups and ${DATA.changes.length} synthetic roster changes, generated by a seeded script. Edge cases included: low confidence, conflicting records, duplicate match, failed licence check, primary care termination with assigned members.</li></ul></div>`;
 }
 
 // ---------- rendering and actions ----------
@@ -188,16 +189,17 @@ function render(focusId) {
   const el = keep && document.getElementById(keep); if (el) el.focus();
 }
 function go(v) { S.view = v; S.sel = null; S.mode = ''; render(); window.scrollTo(0, 0); }
-function decide(status, text) { const c = byId(S.sel); if (!c || c.status !== 'pending') return; c.status = status; if (status !== 'rejected') apply(c); log('Plan reviewer (demo)', text, c); S.mode = ''; toast(`${c.id}: ${STATUS[status][0]}`); render('detail-h'); }
+function decide(status, text) { const c = byId(S.sel); if (!c || c.status !== 'pending') return; if (status !== 'rejected' && c.checks.some(k => k.result === 'fail' && /licen[cs]e|credential/i.test(k.name))) { toast('Cannot approve: resolve the failed credential or licence check first'); return; } c.status = status; if (status !== 'rejected') apply(c); log('Plan reviewer (demo)', text, c); S.mode = ''; toast(`${c.id}: ${STATUS[status][0]}`); render('detail-h'); }
 const ACT = {
   go: id => go(id),
   reset: () => { reset(); toast('Demo reset'); },
   upload: () => { S.uploaded = true; log('Group roster admin (demo)', 'Uploaded roster file; AI mapped 9 columns and found 12 differences'); render('submit'); },
   submit: () => {
+    if (!S.attested) { toast('Review and attest the unchanged records first'); return; }
     const mine = S.changes.filter(c => c.group === G1 && c.status === 'draft');
     mine.forEach(c => { if (!c.include) { c.status = 'withdrawn'; return; } c.submitted = DEMO_DATE; log('Group roster admin (demo)', 'Confirmed change', c); if (c.tier === 'auto') { c.status = 'auto_applied'; apply(c); log('AI validation', `Scored ${c.confidence}; all checks passed; auto-applied`, c); } else { c.status = 'pending'; log('AI validation', `Scored ${c.confidence}; routed to review`, c); } });
-    S.roster.filter(r => r.group === G1 && r.status === 'active').forEach(r => r.last_verified = DEMO_DATE);
-    log('Group roster admin (demo)', 'Attested all other clinicians on file as correct');
+    S.roster.filter(r => r.group === G1 && r.status === 'active' && !mine.some(c => c.practitioner_id === r.id)).forEach(r => r.last_verified = DEMO_DATE);
+    log('Group roster admin (demo)', 'Attested reviewed unchanged records; unresolved and excluded changes remain unverified');
     S.submitted = true; toast('Submitted once, sent to 3 plans'); render('to-queue');
   },
   open: id => { S.sel = id; S.mode = ''; render('detail-h'); $('#detail').scrollIntoView({ block: 'start' }); },
@@ -218,10 +220,11 @@ const ACT = {
     c.status = 'pending'; log('Plan reviewer (demo)', 'Rolled back to the previous version and returned to review', c); toast(`${c.id}: rolled back`); render('detail-h');
   },
   exportAudit: () => download('roster-exchange-audit-log-synthetic.csv', [['time', 'actor', 'change_id', 'action'], ...S.audit.map(e => [e.t, e.actor, e.id, e.action])]),
-  exportReceipt: () => download('roster-exchange-receipt-synthetic.csv', [['change_id', 'clinician', 'type', 'field', 'old', 'new', 'status'], ...S.changes.filter(c => c.group === G1 && DATA.changes.find(d => d.id === c.id).status === 'draft').map(c => [c.id, c.practitioner, TYPE[c.type], c.field, c.old, c.new, STATUS[c.status][0]])]),
+  exportReceipt: () => download('roster-exchange-receipt-synthetic.csv', [['change_id', 'clinician', 'type', 'field', 'old', 'new', 'status', 'scope', 'downstream_confirmation'], ...S.changes.filter(c => c.group === G1 && DATA.changes.find(d => d.id === c.id).status === 'draft').map(c => [c.id, c.practitioner, TYPE[c.type], c.field, c.old, c.new, STATUS[c.status][0], 'Synthetic demo provider record', 'Not connected / not confirmed'])]),
 };
 document.addEventListener('click', e => { const b = e.target.closest('[data-act]'); if (b && S) ACT[b.dataset.act](b.dataset.id); });
-document.addEventListener('change', e => { const t = e.target; if (t.dataset.f) { S.f[t.dataset.f] = t.value; render(); } else if (t.dataset.inc) { byId(t.dataset.inc).include = t.checked; render(); } });
+document.addEventListener('change', e => { const t = e.target; if (t.dataset.attest) { S.attested = t.checked; render('attest'); } else if (t.dataset.f) { S.f[t.dataset.f] = t.value; render(); } else if (t.dataset.inc) { byId(t.dataset.inc).include = t.checked; render(); } });
 document.addEventListener('input', e => { if (e.target.dataset.q) { S.f.q = e.target.value; $('#qbody').innerHTML = rows(); } else if (e.target.dataset.rq) { S.rq = e.target.value; $('#rbody').innerHTML = rosterRows(); } });
-fetch('data.json?v=8').then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then(d => { DATA = d; reset(); })
+fetch('data.json?v=9').then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then(d => { DATA = d; reset(); })
   .catch(err => { $('#view').innerHTML = `<div class="card err">The synthetic dataset could not be loaded (${esc(err.message)}). Reload the page to try again.</div>`; });
+

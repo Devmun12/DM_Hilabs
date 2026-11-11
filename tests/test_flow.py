@@ -25,6 +25,8 @@ def run(page, tag):
     page.click("#upload")
     assert page.locator(".card:not(.ai) tbody tr").count() == 12
     page.screenshot(path=f"{OUT}/{tag}_2_provider_diff.png", full_page=True)
+    assert page.is_disabled("#submit")
+    page.check("#attest")
     page.click("#submit")
     assert "Sent to Synthetic Plan A" in page.inner_text("#view")
     # Step 2: plan queue, filter, open, approve, edit, reject
@@ -66,7 +68,7 @@ def run(page, tag):
     assert "32 of 48" in txt and "Rejected: Failed licence" in txt, txt[:400]
     page.screenshot(path=f"{OUT}/{tag}_4_outcomes.png", full_page=True)
     page.click("#nav-how")
-    assert "What this prototype proves" in page.inner_text("#view")
+    assert "What this prototype demonstrates" in page.inner_text("#view")
     # Reset returns to the seeded state
     page.click("#reset")
     page.click("#nav-queue")
