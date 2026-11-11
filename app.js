@@ -188,5 +188,5 @@ const ACT = {
 document.addEventListener('click', e => { const b = e.target.closest('[data-act]'); if (b && S) ACT[b.dataset.act](b.dataset.id); });
 document.addEventListener('change', e => { const t = e.target; if (t.dataset.f) { S.f[t.dataset.f] = t.value; render(); } else if (t.dataset.inc) { byId(t.dataset.inc).include = t.checked; render(); } });
 document.addEventListener('input', e => { if (e.target.dataset.q) { S.f.q = e.target.value; $('#qbody').innerHTML = rows(); } });
-fetch('data.json?v=5').then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then(d => { DATA = d; reset(); })
+fetch('data.json?v=6').then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then(d => { DATA = d; reset(); })
   .catch(err => { $('#view').innerHTML = `<div class="card err">The synthetic dataset could not be loaded (${esc(err.message)}). Reload the page to try again.</div>`; });
