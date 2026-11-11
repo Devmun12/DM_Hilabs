@@ -78,3 +78,32 @@ h1,h2,.tile .v{color:var(--ink)}
 .banner{background:#082464;color:#fff;border-bottom:0}
 .toast{background:#0a399e}
 @media(max-width:700px){.shell{flex-direction:column}.rail{flex:none;flex-direction:row;width:100%;padding:6px 8px;border-right:0;border-bottom:1px solid #dfe2e8;overflow-x:auto}.rail nav{flex-direction:row}.rail nav button{width:54px}.top{padding:8px 12px}}
+/* Charts, motion and polish */
+.chip{border:0}
+.insight{color:#5c6372;font-size:13px;margin:0 0 10px}
+.donut{width:150px;height:150px;border-radius:50%;display:grid;place-items:center;flex:none;animation:spin .9s ease both}
+.donut>div{width:94px;height:94px;border-radius:50%;background:#fff;display:grid;place-content:center;text-align:center}
+.donut small{color:var(--muted);font-size:11px}.donut b{font-size:22px}
+.legend li{display:flex;align-items:center;gap:8px}.legend i{width:10px;height:10px;border-radius:50%;display:inline-block}.legend b{margin-left:6px}
+.hb{display:grid;grid-template-columns:120px 1fr 28px;align-items:center;gap:8px;font-size:14px}.hb .bar{margin:5px 0;height:14px}
+.funnel{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.funnel>div{padding:26px 8px;text-align:center;border-radius:4px;display:grid;gap:4px;animation:rise .5s ease both}
+.funnel span{font-size:13px}.funnel b{font-size:17px}
+.f0{background:#082464;color:#fff}.f1{background:#0f47d1;color:#fff;animation-delay:.08s!important}.f2{background:#2f67e9;color:#fff;animation-delay:.16s!important}.f3{background:#a9c1f8;color:#082464;animation-delay:.24s!important}.f4{background:#e4ecfd;color:#082464;animation-delay:.32s!important}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes spin{from{opacity:0;transform:rotate(-90deg) scale(.85)}to{opacity:1;transform:none}}
+main>*{animation:rise .35s ease both}
+main>*:nth-child(2){animation-delay:.05s}main>*:nth-child(3){animation-delay:.1s}main>*:nth-child(4){animation-delay:.15s}main>*:nth-child(n+5){animation-delay:.2s}
+.tiles>.card:nth-child(2){animation-delay:.06s}.tiles>.card:nth-child(3){animation-delay:.12s}.tiles>.card:nth-child(4){animation-delay:.18s}
+.tiles>.card{animation:rise .4s ease both;transition:transform .15s ease,box-shadow .15s ease}
+.tiles>.card:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(8,36,100,.10)}
+.meter i,.bar{transform-origin:left;animation:grow .8s cubic-bezier(.2,.8,.2,1) both}
+.btn,.rail nav button{transition:background .15s ease,color .15s ease,transform .1s ease}
+.btn:hover{filter:brightness(1.07)}.btn:active{transform:scale(.97)}
+.rail nav button:hover{background:#edf2fc;color:#0a399e}.rail nav button[aria-current="page"]:hover{background:#0a399e;color:#fff}
+tbody tr{transition:background .12s ease}tbody tr:hover{background:#f5f8fe}
+.tile .v{font-size:30px;letter-spacing:-.5px}
+.detail{box-shadow:0 8px 24px rgba(42,106,241,.14)}
+@media(max-width:700px){.funnel{grid-template-columns:repeat(2,1fr)}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}

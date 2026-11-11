@@ -18,7 +18,7 @@ Edge cases in the data: low-confidence change (SYN-C-009), duplicate match (SYN-
 ## Files
 | File | Purpose |
 |---|---|
-| `index.html`, `styles.css`, `app.js` | Static app, vanilla JavaScript, no libraries, no storage, no external calls |
+| `index.html`, `styles.css`, `app.js` | Static app, vanilla JavaScript, no libraries, no storage; the only external request is an optional web font |
 | `data.json` | Synthetic dataset (150 clinicians, 6 groups, 48 roster changes) |
 | `gen_data.py` | Seeded generator for `data.json` (`python3 gen_data.py`) |
 | `tests/test_flow.py` | Playwright test of the main flow at desktop and phone widths |

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Playwright smoke test of the main flow. Usage: python3 tests/test_flow.py [base_url] [screenshot_dir]
 Fails on any console error, page error or failed request. Takes desktop and phone screenshots."""
-import sys, os
+import sys, os, re
 from playwright.sync_api import sync_playwright
 
 BASE = sys.argv[1] if len(sys.argv) > 1 else "http://localhost:8765/"
@@ -15,6 +15,7 @@ def run(page, tag):
     page.on("pageerror", lambda e: problems.append(f"{tag} pageerror: {e}"))
     page.on("requestfailed", lambda r: problems.append(f"{tag} request failed: {r.url}"))
     page.on("response", lambda r: problems.append(f"{tag} HTTP {r.status}: {r.url}") if r.status >= 400 else None)
+    page.route(re.compile(r"fonts\.(googleapis|gstatic)\.com"), lambda r: r.fulfill(status=200, content_type="text/css", body=""))  # web font is optional
     page.goto(BASE, wait_until="networkidle")
     assert "Synthetic data only" in page.inner_text(".banner")
     page.wait_for_selector("#start-provider")

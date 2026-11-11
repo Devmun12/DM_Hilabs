@@ -40,6 +40,21 @@ function metrics() {
   return { n, auto, pend, decided: cnt('approved') + cnt('edited') + cnt('rejected'), autoPct: pct(auto, n), freshBefore: fresh(DATA.roster), freshAfter: fresh(S.roster), minBefore: n * MIN_MANUAL, minAfter: (n - auto) * MIN_REVIEW };
 }
 
+// ---------- charts ----------
+function charts(m) {
+  const a1 = 360 * m.auto / m.n, a2 = a1 + 360 * m.pend / m.n, by = {};
+  live().filter(c => c.status === 'pending').forEach(c => by[c.type] = (by[c.type] || 0) + 1);
+  const max = Math.max(1, ...Object.values(by));
+  const bars = Object.entries(by).sort((a, b) => b[1] - a[1]).map(([k, v]) => `<div class="hb"><span>${esc(TYPE[k])}</span><div class="bar after" style="width:${Math.max(6, 100 * v / max)}%"></div><b>${v}</b></div>`).join('') || '<p class="muted">Nothing is waiting for review.</p>';
+  return `<div class="grid2"><div class="card"><h2>Changes by status</h2><p class="insight">${m.autoPct}% needed no manual touch; a person decides the rest.</p><div class="row"><div class="donut" role="img" aria-label="${m.auto} auto-applied, ${m.pend} need review, ${m.decided} decided" style="background:conic-gradient(#73b124 0 ${a1}deg,#f0b818 ${a1}deg ${a2}deg,#0a399e ${a2}deg 360deg)"><div><small>Total Count</small><b>${m.n}</b></div></div>
+  <ul class="plain legend"><li><i style="background:#73b124"></i>Applied automatically <b>${m.auto}</b></li><li><i style="background:#f0b818"></i>Needs review <b>${m.pend}</b></li><li><i style="background:#0a399e"></i>Decided by a reviewer <b>${m.decided}</b></li></ul></div></div>
+  <div class="card"><h2>Waiting for review, by type</h2><p class="insight">Adds and terminations always come to a person.</p>${bars}</div></div>`;
+}
+function funnel(m) {
+  const st = [['Received', m.n], ['Mapped and matched', m.n], ['Applied automatically', m.auto], ['Decided by a reviewer', m.decided], ['Waiting for review', m.pend]];
+  return `<div class="card"><h2>Roster change funnel</h2><div class="funnel">${st.map((x, i) => `<div class="f${i}"><span>${x[0]}</span><b>${x[1]} changes</b></div>`).join('')}</div></div>`;
+}
+
 // ---------- views ----------
 function vStart() {
   const d1 = S.submitted, d2 = S.audit.some(e => e.actor === 'Plan reviewer (demo)'), d3 = S.seen;
@@ -110,6 +125,7 @@ function vQueue() {
   <div class="card tile"><div class="v">${m.autoPct}%</div><div class="l">Applied without manual touch</div><div class="b muted">Before: 0%</div></div>
   <div class="card tile"><div class="v">${m.pend}</div><div class="l">Waiting for review</div><div class="b muted">${m.decided} decided in this session</div></div>
   <div class="card tile"><div class="v">${m.freshAfter}%</div><div class="l">Roster verified in the last 90 days</div><div class="b muted">Before: ${m.freshBefore}%</div></div></div>
+  ${charts(m)}
   ${S.sel ? vDetail(byId(S.sel)) : ''}
   <div class="card"><div class="filters">
   <label class="f">Type<select id="f-type" data-f="type"><option value="">All types</option>${opt(TYPE, S.f.type)}</select></label>
@@ -123,6 +139,7 @@ function vOutcomes() {
   const cmp = (label, b, a, unit) => `<div class="card"><h2>${label}</h2><div class="muted">Before (manual): ${b}${unit}</div><div class="bar" style="width:${w(b, Math.max(a, b))}%"></div><div>With the exchange: <b>${a}${unit}</b></div><div class="bar after" style="width:${w(a, Math.max(a, b))}%"></div></div>`;
   return `<div class="card"><h1>Outcomes</h1><p class="muted">These numbers update as you submit, approve, edit and reject. They are computed from the synthetic dataset and illustrate the metrics in the deck; they are not forecasts.</p></div>
   <div class="tiles">${cmp('Changes needing a manual touch', m.n, m.n - m.auto, '')}${cmp('Staff minutes on these changes (illustrative)', m.minBefore, m.minAfter, ' min')}${cmp('Roster verified in the last 90 days', m.freshBefore, m.freshAfter, '%')}</div>
+  ${funnel(m)}
   <div class="card"><h2>How these map to the deck's launch metrics</h2><div class="tw"><table><thead><tr><th>On screen</th><th>Value now</th><th>Deck metric and threshold</th></tr></thead><tbody>
   <tr><td>Applied without manual touch</td><td>${m.autoPct}% (${m.auto} of ${m.n})</td><td>Changes applied without manual touch: 40% or more at pilot day 90</td></tr>
   <tr><td>Roster verified in the last 90 days</td><td>${m.freshAfter}% (was ${m.freshBefore}%)</td><td>North star: 80% or more for pilot groups</td></tr>
@@ -171,5 +188,5 @@ const ACT = {
 document.addEventListener('click', e => { const b = e.target.closest('[data-act]'); if (b && S) ACT[b.dataset.act](b.dataset.id); });
 document.addEventListener('change', e => { const t = e.target; if (t.dataset.f) { S.f[t.dataset.f] = t.value; render(); } else if (t.dataset.inc) { byId(t.dataset.inc).include = t.checked; render(); } });
 document.addEventListener('input', e => { if (e.target.dataset.q) { S.f.q = e.target.value; $('#qbody').innerHTML = rows(); } });
-fetch('data.json').then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then(d => { DATA = d; reset(); })
+fetch('data.json?v=5').then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then(d => { DATA = d; reset(); })
   .catch(err => { $('#view').innerHTML = `<div class="card err">The synthetic dataset could not be loaded (${esc(err.message)}). Reload the page to try again.</div>`; });
