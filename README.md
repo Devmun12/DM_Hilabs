@@ -11,7 +11,10 @@ Live: https://devmun12.github.io/DM_Hilabs/ (no login, no install)
 2. **Provider group**: upload the sample roster (simulated), check the 12 differences, confirm.
 3. **Plan review queue**: filter, open a flagged change, read the AI suggestion and evidence, then approve, edit or reject. Each decision is written to the audit trail.
 4. **Outcomes**: before and after numbers update as you act.
-5. **How it works**: the pipeline and where each part sits in the deck.
+5. **Roster**: the plan's roster on demand, searchable, with when each record was last confirmed.
+6. **How it works**: the pipeline and where each part sits in the deck.
+
+Also included: a column-mapping panel after upload, a downloadable provider receipt (CSV), count tabs on the review queue, a side-by-side comparison and a Roll back button on applied changes, and CSV export of the audit log.
 
 Edge cases in the data: low-confidence change (SYN-C-009), duplicate match (SYN-C-010), conflicting records (SYN-C-011), failed licence check (SYN-C-003), primary care termination with assigned members (SYN-C-005), new clinician not yet credentialed (SYN-C-002).
 

@@ -40,6 +40,31 @@ function metrics() {
   return { n, auto, pend, decided: cnt('approved') + cnt('edited') + cnt('rejected'), autoPct: pct(auto, n), freshBefore: fresh(DATA.roster), freshAfter: fresh(S.roster), minBefore: n * MIN_MANUAL, minAfter: (n - auto) * MIN_REVIEW };
 }
 
+const MAP = [['Provider Name', 'Clinician name', 99], ['NPI #', 'NPI', 100], ['Speciality', 'Specialty', 97], ['Practice Addr', 'Location address', 94], ['Ste', 'Suite', 91], ['Office Ph', 'Phone', 98], ['Start Dt', 'Effective date', 93], ['Term Dt', 'Termination date', 95], ['TIN', 'Group tax ID', 100]];
+const MAPPING = `<details class="map"><summary>View how the 9 columns were mapped</summary><div class="tw"><table><thead><tr><th>Column in your file</th><th>Mapped to</th><th>Confidence</th></tr></thead><tbody>${MAP.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}%</td></tr>`).join('')}</tbody></table></div><p class="muted">Simulated. In the product you could correct any mapping before the diff is built.</p></details>`;
+function download(name, rows) {
+  const csv = rows.map(r => r.map(v => `"${String(v ?? '').replace(/"/g, '""')}"`).join(',')).join('\n');
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' })); a.download = name;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000); toast('Downloaded ' + name);
+}
+function tabs(m) {
+  const t = [['', 'All', m.n], ['pending', 'Needs review', m.pend], ['auto_applied', 'Applied automatically', m.auto], ['decided', 'Decided by a reviewer', m.decided]];
+  return `<div class="tabs">${t.map(x => `<button data-act="tab" data-id="${x[0]}" id="tab-${x[0] || 'all'}" class="${S.f.status === x[0] ? 'on' : ''}">${x[1]} <span>${x[2]}</span></button>`).join('')}</div>`;
+}
+function rosterRows() {
+  const q = (S.rq || '').trim().toLowerCase(), gn = Object.fromEntries(DATA.groups.map(g => [g.id, g.name]));
+  const list = S.roster.filter(r => !q || (r.name + r.npi + r.specialty + gn[r.group]).toLowerCase().includes(q));
+  if (!list.length) return '<tr><td colspan="6" class="muted">No clinicians match this search.</td></tr>';
+  return list.slice(0, 40).map(r => `<tr><td>${esc(r.name)}</td><td>${esc(r.npi)}</td><td>${esc(r.specialty)}</td><td>${esc(gn[r.group])}</td><td>${r.status === 'active' ? chip('Active', 'c-green') : chip('Terminated', 'c-grey')}</td><td>${esc(r.last_verified)} ${days(r.last_verified) > 90 ? chip('Over 90 days', 'c-amber') : chip('Current', 'c-green')}</td></tr>`).join('') + (list.length > 40 ? `<tr><td colspan="6" class="muted">Showing 40 of ${list.length}. Search to narrow.</td></tr>` : '');
+}
+function vRoster() {
+  const act = S.roster.filter(r => r.status === 'active'), fresh = act.filter(r => days(r.last_verified) <= 90).length;
+  return `<div class="card"><h1>Roster on demand</h1><p class="muted">Synthetic Plan A · the latest validated roster, with when each record was last confirmed by the provider</p></div>
+  <div class="tiles"><div class="card tile"><div class="v">${act.length}</div><div class="l">Active clinicians</div></div><div class="card tile"><div class="v">${pct(fresh, act.length)}%</div><div class="l">Confirmed in the last 90 days</div></div><div class="card tile"><div class="v">${act.length - fresh}</div><div class="l">Due for confirmation</div></div><div class="card tile"><div class="v">${S.roster.length - act.length}</div><div class="l">Terminated in this session</div></div></div>
+  <div class="card"><div class="filters"><label class="f">Search clinician, NPI, specialty or group<input type="text" id="r-q" data-rq="1" value="${esc(S.rq || '')}" placeholder="Type to search"></label></div>
+  <div class="tw" style="margin-top:10px"><table><thead><tr><th>Clinician</th><th>NPI (synthetic)</th><th>Specialty</th><th>Group</th><th>Status</th><th>Last verified</th></tr></thead><tbody id="rbody">${rosterRows()}</tbody></table></div></div>`;
+}
+
 // ---------- charts ----------
 function charts(m) {
   const a1 = 360 * m.auto / m.n, a2 = a1 + 360 * m.pend / m.n, by = {};
@@ -80,13 +105,13 @@ function vProvider() {
     </tbody></table></div><p class="muted">Showing 8 of ${mine.length} clinicians.</p></div>`;
   else if (!S.submitted) {
     const inc = drafts.filter(c => c.include).length;
-    body = `<div class="card ai"><b>File read:</b> northfield_roster_nov.xlsx (synthetic) · 30 rows · 9 of 9 columns mapped · 27 rows matched to clinicians already on the plan record · ${drafts.length} differences found. Nothing is sent until you confirm.</div>
+    body = `<div class="card ai"><b>File read:</b> northfield_roster_nov.xlsx (synthetic) · 30 rows · 9 of 9 columns mapped · 27 rows matched to clinicians already on the plan record · ${drafts.length} differences found. Nothing is sent until you confirm.${MAPPING}</div>
     <div class="card"><h2>Step 2: check the ${drafts.length} differences</h2><div class="tw"><table><thead><tr><th>Include</th><th>Clinician</th><th>Type</th><th>Change</th><th>What happens next</th></tr></thead><tbody>
     ${drafts.map(c => `<tr><td><input type="checkbox" id="inc-${c.id}" data-inc="${c.id}" ${c.include ? 'checked' : ''} aria-label="Include change for ${esc(c.practitioner)}"></td><td>${esc(c.practitioner)}</td><td>${esc(TYPE[c.type])}</td><td>${changeText(c)}</td><td>${c.tier === 'auto' ? chip('Applies automatically', 'c-green') : chip('Plan will review', 'c-amber')}<div class="muted">${esc(c.reason)}</div></td></tr>`).join('')}
     </tbody></table></div>
     <p>By confirming you also attest that the other ${mine.length - 9} clinicians on file are correct as of ${DEMO_DATE}.</p>
     <button class="btn navy" data-act="submit" id="submit">Confirm ${inc} changes and send to ${g.plans.length} plans</button></div>`;
-  } else body = `<div class="card"><h2>Sent to ${g.plans.map(esc).join(', ')}</h2><p>One submission reached every plan your group works with. You can see the status of each change here, so nobody needs to call.</p><div class="tw"><table><thead><tr><th>Clinician</th><th>Type</th><th>Change</th><th>Status at the plans</th></tr></thead><tbody>
+  } else body = `<div class="card"><div class="row" style="justify-content:space-between"><h2>Sent to ${g.plans.map(esc).join(', ')}</h2><button class="btn outline small" data-act="exportReceipt" id="export-receipt">Download receipt (CSV)</button></div><p>One submission reached every plan your group works with. You can see the status of each change here, so nobody needs to call.</p><div class="tw"><table><thead><tr><th>Clinician</th><th>Type</th><th>Change</th><th>Status at the plans</th></tr></thead><tbody>
     ${drafts.map(c => `<tr><td>${esc(c.practitioner)}</td><td>${esc(TYPE[c.type])}</td><td>${changeText(c)}</td><td>${chip(...STATUS[c.status])}</td></tr>`).join('')}
     </tbody></table></div><button class="btn" data-act="go" data-id="queue" id="to-queue">Next: see the plan review queue</button></div>`;
   return `<div class="card"><h1>${esc(g.name)}</h1><p class="muted">${esc(g.id)} · roster administrator view · sends rosters to ${g.plans.length} plans</p></div>
@@ -96,13 +121,13 @@ function vProvider() {
 }
 function rows() {
   const f = S.f, q = f.q.trim().toLowerCase();
-  const list = live().filter(c => (!f.type || c.type === f.type) && (!f.status || c.status === f.status) && (!q || (c.practitioner + c.group_name + c.id).toLowerCase().includes(q)));
+  const list = live().filter(c => (!f.type || c.type === f.type) && (!f.status || c.status === f.status || (f.status === 'decided' && ['approved', 'edited', 'rejected'].includes(c.status))) && (!q || (c.practitioner + c.group_name + c.id).toLowerCase().includes(q)));
   if (!list.length) return '<tr><td colspan="7" class="muted">No changes match these filters.</td></tr>';
   return list.map(c => `<tr><td>${esc(c.id)}</td><td>${esc(c.group_name)}</td><td>${esc(c.practitioner)}</td><td>${esc(TYPE[c.type])}</td><td>${changeText(c)}</td><td>${Math.round(c.confidence * 100)}%</td><td>${chip(...STATUS[c.status])}</td><td><button class="btn outline small" data-act="open" data-id="${c.id}" id="open-${c.id}">Open</button></td></tr>`).join('');
 }
 function vDetail(c) {
   const res = { pass: 'c-green', warn: 'c-amber', fail: 'c-red' };
-  let actions = `<p>${chip(...STATUS[c.status])} No action needed.</p>`;
+  let actions = `<p>${chip(...STATUS[c.status])} ${c.status === 'rejected' ? 'Rejected. Nothing was written to the plan record.' : 'Written to the plan record.'}</p>${c.status === 'rejected' ? '' : '<button class="btn outline" data-act="rollback" id="rollback">Roll back this change</button>'}`;
   if (c.status === 'pending') {
     if (S.mode === 'edit') actions = `<label class="f">Corrected value<input type="text" id="editval" value="${esc(c.new)}"></label><div class="row" style="margin-top:8px"><button class="btn" data-act="saveedit" id="saveedit">Save and approve</button><button class="btn outline" data-act="cancel" id="cancel">Cancel</button></div>`;
     else if (S.mode === 'reject') actions = `<label class="f">Reason for rejection<select id="rejreason"><option>Failed licence or credential check</option><option>Conflicts with a more recent submission</option><option>Not authorised for this group</option><option>Other</option></select></label><div class="row" style="margin-top:8px"><button class="btn danger" data-act="savereject" id="savereject">Confirm rejection</button><button class="btn outline" data-act="cancel" id="cancel">Cancel</button></div>`;
@@ -110,7 +135,7 @@ function vDetail(c) {
   }
   return `<div class="card detail" id="detail"><div class="row" style="justify-content:space-between"><h2 id="detail-h" tabindex="-1">${esc(c.id)} · ${esc(TYPE[c.type])} · ${esc(c.practitioner)}</h2><button class="btn outline small" data-act="close" id="close">Close</button></div>
   <p class="muted">${esc(c.group_name)} · NPI (synthetic) ${esc(c.npi)} · received ${esc(c.submitted)}</p>
-  <div class="grid2"><div><p><b>Change:</b> ${esc(c.field)}: ${changeText(c)}</p>
+  <div class="grid2"><div><div class="cmp2"><div><small>Plan record today (${esc(c.field)})</small><b>${esc(c.old)}</b></div><span aria-hidden="true">→</span><div class="new"><small>Submitted by the group</small><b>${esc(c.new)}</b></div></div>
   <div class="ai"><b>AI suggestion: ${esc(c.recommend)}</b><p>${esc(c.reason)}</p><div class="meter" role="img" aria-label="Confidence ${Math.round(c.confidence * 100)} percent"><i style="width:${c.confidence * 100}%"></i></div><p class="muted">Confidence ${Math.round(c.confidence * 100)}% (only contact-detail updates at 90% or more with all checks passed apply automatically; adds, terminations and specialty changes always go to a person)</p></div>
   <h2 style="margin-top:12px">Decision</h2>${actions}</div>
   <div><h2>Evidence</h2><ul class="plain">${c.checks.map(k => `<li>${chip(k.result, res[k.result])} ${esc(k.name)}${k.detail ? `<div class="muted">${esc(k.detail)}</div>` : ''}</li>`).join('')}</ul>
@@ -127,7 +152,7 @@ function vQueue() {
   <div class="card tile"><div class="v">${m.freshAfter}%</div><div class="l">Roster verified in the last 90 days</div><div class="b muted">Before: ${m.freshBefore}%</div></div></div>
   ${charts(m)}
   ${S.sel ? vDetail(byId(S.sel)) : ''}
-  <div class="card"><div class="filters">
+  <div class="card">${tabs(m)}<div class="filters">
   <label class="f">Type<select id="f-type" data-f="type"><option value="">All types</option>${opt(TYPE, S.f.type)}</select></label>
   <label class="f">Status<select id="f-status" data-f="status"><option value="">All statuses</option>${opt(st, S.f.status)}</select></label>
   <label class="f">Search clinician, group or ID<input type="text" id="f-q" data-q="1" value="${esc(S.f.q)}" placeholder="Type to search"></label>
@@ -145,7 +170,7 @@ function vOutcomes() {
   <tr><td>Roster verified in the last 90 days</td><td>${m.freshAfter}% (was ${m.freshBefore}%)</td><td>North star: 80% or more for pilot groups</td></tr>
   <tr><td>Waiting for review / decided</td><td>${m.pend} / ${m.decided}</td><td>Cycle time: 2 business days or less from submission to plan record</td></tr>
   <tr><td>Staff minutes</td><td>${m.minBefore} → ${m.minAfter} min</td><td>Assumes ${MIN_MANUAL} min to key a change by hand and ${MIN_REVIEW} min to review an exception (assumption A14, to be measured)</td></tr></tbody></table></div></div>
-  <div class="card"><h2>Audit log (most recent first)</h2><ul class="plain">${S.audit.slice(0, 40).map(h => `<li><span class="muted">${esc(h.t)}</span> · <b>${esc(h.actor)}</b>${h.id ? ' · ' + esc(h.id) : ''}: ${esc(h.action)}</li>`).join('')}</ul></div>`;
+  <div class="card"><div class="row" style="justify-content:space-between"><h2>Audit log (most recent first)</h2><button class="btn outline small" data-act="exportAudit" id="export-audit">Export CSV</button></div><ul class="plain">${S.audit.slice(0, 40).map(h => `<li><span class="muted">${esc(h.t)}</span> · <b>${esc(h.actor)}</b>${h.id ? ' · ' + esc(h.id) : ''}: ${esc(h.action)}</li>`).join('')}</ul></div>`;
 }
 function vHow() {
   const s = [['Send', 'The group uploads or emails the roster file it already keeps. No template.', 'Slide 8'], ['Map and match', 'AI maps columns to a standard roster layout and matches each row to a clinician on the plan record.', 'Slide 12'], ['Diff', 'Only differences are shown: adds, terminations, updates, duplicates, conflicts.', 'Slide 8'], ['Confirm', 'The group confirms the changes and attests that everything else is correct.', 'Slide 8'], ['Validate and route', 'Each change gets checks and a confidence score. Only contact-detail updates (phone, suite) apply automatically, and only at 90% confidence or more with every check passed. Adds, terminations, specialty changes and conflicts always go to a person.', 'Slide 12'], ['Review exceptions', 'Plan staff approve, edit or reject with a reason. New clinicians are never loaded as participating automatically: delegated-group adds need a reviewer to confirm the effective date, others go to credentialing. A clinician missing from a file is never treated as a termination.', 'Slides 8 and 12'], ['Record and measure', 'Every step is written to an audit trail, and the launch metrics are computed from those events.', 'Slide 13']];
@@ -155,7 +180,7 @@ function vHow() {
 }
 
 // ---------- rendering and actions ----------
-const VIEWS = { start: vStart, provider: vProvider, queue: vQueue, outcomes: vOutcomes, how: vHow };
+const VIEWS = { start: vStart, provider: vProvider, queue: vQueue, outcomes: vOutcomes, roster: vRoster, how: vHow };
 function render(focusId) {
   const keep = focusId || (document.activeElement && document.activeElement.id);
   $('#view').innerHTML = VIEWS[S.view]();
@@ -184,9 +209,19 @@ const ACT = {
   cancel: () => { S.mode = ''; render('approve'); },
   saveedit: () => { const v = $('#editval').value.trim(); if (!v) { toast('Enter a value first'); return; } const c = byId(S.sel); const was = c.new; c.new = v; decide('edited', `Edited value from "${was}" to "${v}" and approved`); },
   savereject: () => decide('rejected', 'Rejected: ' + $('#rejreason').value),
+  tab: id => { S.f.status = id || ''; render('tab-' + (id || 'all')); },
+  rollback: () => {
+    const c = byId(S.sel); if (!c || !['approved', 'edited', 'auto_applied'].includes(c.status)) return;
+    const r = S.roster.find(x => x.id === c.practitioner_id);
+    if (c.type === 'ADD') S.roster = S.roster.filter(x => x.id !== c.practitioner_id);
+    else if (r) { if (c.type === 'TERM') r.status = 'active'; else if (c.type === 'UPDATE' || c.type === 'CONFLICT') r[c.field] = c.old; }
+    c.status = 'pending'; log('Plan reviewer (demo)', 'Rolled back to the previous version and returned to review', c); toast(`${c.id}: rolled back`); render('detail-h');
+  },
+  exportAudit: () => download('roster-exchange-audit-log-synthetic.csv', [['time', 'actor', 'change_id', 'action'], ...S.audit.map(e => [e.t, e.actor, e.id, e.action])]),
+  exportReceipt: () => download('roster-exchange-receipt-synthetic.csv', [['change_id', 'clinician', 'type', 'field', 'old', 'new', 'status'], ...S.changes.filter(c => c.group === G1 && DATA.changes.find(d => d.id === c.id).status === 'draft').map(c => [c.id, c.practitioner, TYPE[c.type], c.field, c.old, c.new, STATUS[c.status][0]])]),
 };
 document.addEventListener('click', e => { const b = e.target.closest('[data-act]'); if (b && S) ACT[b.dataset.act](b.dataset.id); });
 document.addEventListener('change', e => { const t = e.target; if (t.dataset.f) { S.f[t.dataset.f] = t.value; render(); } else if (t.dataset.inc) { byId(t.dataset.inc).include = t.checked; render(); } });
-document.addEventListener('input', e => { if (e.target.dataset.q) { S.f.q = e.target.value; $('#qbody').innerHTML = rows(); } });
-fetch('data.json?v=7').then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then(d => { DATA = d; reset(); })
+document.addEventListener('input', e => { if (e.target.dataset.q) { S.f.q = e.target.value; $('#qbody').innerHTML = rows(); } else if (e.target.dataset.rq) { S.rq = e.target.value; $('#rbody').innerHTML = rosterRows(); } });
+fetch('data.json?v=8').then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then(d => { DATA = d; reset(); })
   .catch(err => { $('#view').innerHTML = `<div class="card err">The synthetic dataset could not be loaded (${esc(err.message)}). Reload the page to try again.</div>`; });

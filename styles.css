@@ -104,3 +104,18 @@ tbody tr{transition:background .12s ease}tbody tr:hover{background:#f5f8fe}
 .detail{box-shadow:0 8px 24px rgba(42,106,241,.14)}
 @media(max-width:700px){.funnel{grid-template-columns:repeat(2,1fr)}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+/* Tabs, comparison, mapping, KPI icons */
+.rail nav button svg{display:block}
+.tabs{display:flex;flex-wrap:wrap;gap:4px;border-bottom:1px solid #e1e4ea;margin-bottom:12px}
+.tabs button{border:0;background:none;font:inherit;font-weight:600;color:#1b4fc4;padding:8px 10px;cursor:pointer;border-bottom:3px solid transparent}
+.tabs button.on{border-bottom-color:#2a6af1;color:var(--ink)}
+.tabs button span{background:#edf2fc;color:#0a399e;border-radius:999px;padding:1px 8px;font-size:12px;margin-left:4px}
+.cmp2{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;margin:4px 0 12px}
+.cmp2>div{background:#f1f2f5;border-radius:8px;padding:10px;display:grid;gap:4px}
+.cmp2 .new{background:#edf2fc}.cmp2 small{color:var(--muted);font-size:12px}.cmp2 b{overflow-wrap:anywhere}
+details.map{margin-top:10px}details.map summary{cursor:pointer;font-weight:600;color:var(--violet)}
+.tile{position:relative;padding-left:78px;min-height:88px}
+.tile::before{content:"";position:absolute;left:16px;top:20px;width:46px;height:46px;border-radius:50%;background:#e0f5fb url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230787a6' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M4 6h16M4 12h16M4 18h10'/%3E%3C/svg%3E") center/22px no-repeat}
+.tiles>.tile:nth-child(2)::before{background-color:#eef6e2;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233f6b0e' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12l5 5 9-10'/%3E%3C/svg%3E")}
+.tiles>.tile:nth-child(3)::before{background-color:#fff4d6;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238a5a00' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='8'/%3E%3Cpath d='M12 8v4l3 2'/%3E%3C/svg%3E")}
+.tiles>.tile:nth-child(4)::before{background-color:#f2ecfd;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235b27c9' stroke-width='2' stroke-linejoin='round'%3E%3Cpath d='M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6z'/%3E%3C/svg%3E")}

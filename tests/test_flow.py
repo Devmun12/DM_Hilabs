@@ -23,7 +23,7 @@ def run(page, tag):
     # Step 1: provider uploads, reviews the diff, excludes one item, submits
     page.click("#start-provider")
     page.click("#upload")
-    assert page.locator("tbody tr").count() == 12
+    assert page.locator(".card:not(.ai) tbody tr").count() == 12
     page.screenshot(path=f"{OUT}/{tag}_2_provider_diff.png", full_page=True)
     page.click("#submit")
     assert "Sent to Synthetic Plan A" in page.inner_text("#view")
@@ -71,6 +71,15 @@ def run(page, tag):
     page.click("#reset")
     page.click("#nav-queue")
     assert page.inner_text(".tile .v") == "36"
+    # tabs, rollback of an applied change, roster on demand
+    page.click("#tab-auto_applied")
+    page.locator("#qbody button").first.click()
+    page.click("#rollback")
+    assert "Rolled back to the previous version" in page.inner_text("#detail")
+    page.click("#nav-roster")
+    page.fill("#r-q", "Northfield")
+    assert page.locator("#rbody tr").count() >= 28
+    page.click("#nav-queue")
     # no horizontal page scroll
     assert page.evaluate("document.documentElement.scrollWidth <= window.innerWidth + 1"), "horizontal overflow"
 
